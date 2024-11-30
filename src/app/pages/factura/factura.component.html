@@ -1,0 +1,195 @@
+<div *ngIf="invoice" class="d-flex justify-content-end mb-3">
+
+    <button (click)="returnInvoice(invoice)" type="button" class="btn btn-danger">
+        Cancelar
+    </button>
+
+
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div *ngIf="invoice" class="card card-body printableArea">
+            <h3><b>FACTURA</b> <span class="pull-right"># {{invoice.invoice}} </span> <span class="text-danger" *ngIf="!invoice.status"> CANCELADA</span> </h3>
+            <hr>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="pull-left">
+                        <address>
+                            <h3> &nbsp;<b class="text-danger">{{empresa.name}}</b></h3>
+                            <p class="text-muted m-l-5">{{empresa.address}}
+                        </address>
+                        <p class="text-muted mb-0">Por: {{ invoice.create?.name }} </p>
+                    </div>
+                    <div class="pull-right text-right">
+                        <address style="line-height: normal;">
+                            <h3>Cliente o Razón Social,</h3>
+                            <h4 class="font-bold text-capitalize" *ngIf="invoice.client"> {{ invoice.client.name + ' '+ invoice.client.lastname  }} </h4>
+                            <h4 class="font-bold" *ngIf="!invoice.client"> Consumidor Final </h4>
+                            <p class="text-muted mb-0" *ngIf="invoice.client?.phone" > {{ invoice.client?.phone }} </p>
+                            <p class="text-muted mb-0" *ngIf="invoice.client?.city" > {{ invoice.client?.city }} </p>
+                            <p class="text-muted m-l-30"> {{ invoice.client?.address  }}
+                            <p class="m-t-30">
+                                <b>Fecha :</b> <i class="fa fa-calendar"></i> {{ invoice.fecha | date:'short' }}
+                            </p>
+                        </address>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="table-responsive m-t-40" style="clear: both;">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">#</th>
+                                    <th>Producto</th>
+                                    <th class="text-right">Cantidad</th>
+                                    <th class="text-right">Precio</th>
+                                    <th class="text-right">Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of invoice.items; let i = index">
+                                    <td class="text-center"> {{ i+1 }} </td>
+                                    <td> {{ item.description }} </td>
+                                    <td class="text-right"> {{ item.quantity }} </td>
+                                    <td class="text-right"> {{ item.price | currency:'COP' : 'symbol' : '1.0-0' }} </td>
+                                    <td class="text-right"> {{ item.price * item.quantity | currency:'COP' : 'symbol' : '1.0-0' }} </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="pull-right m-t-30 text-right">
+                        <p>Sub-Total: {{ invoice.amount | currency:'COP': 'symbol': '1.0-0' }} </p>
+                        <hr>
+                        <h3><b>Total :</b> {{ invoice.amount | currency:'COP': 'symbol': '1.0-0' }} </h3>
+                        <hr>
+                        <p>Abonos: {{ totalPay | currency:'COP': 'symbol': '1.0-0' }} </p>
+                        <h3 *ngIf="totalPay < invoice.amount"><b>Restante :</b> {{ restante | currency:'COP': 'symbol': '1.0-0' }} </h3>
+                    </div>
+                    <div class="clearfix"></div>
+                    <hr>
+                    <div class="text-right">
+                        <button id="print" class="btn btn-default btn-outline" type="button" data-toggle="modal" data-target="#factura"> <span><i class="fa fa-print"></i> Imprimir</span> </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FACTURA -->
+<div class="modal fade" id="factura" tabindex="-1" aria-labelledby="facturaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" *ngIf="invoice">
+            <div class="modal-header">
+                <h5 class="modal-title" id="facturaLabel">Factura #{{invoice.invoice}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="pb-2">
+                    <p class="mb-3 text-center">TOTAL</p>
+                    <h4 class="mb-3 display-5 text-center text-break"> {{ invoice.amount | currency:'COP' : 'symbol' : '1.0-0' }} </h4>
+                </div>
+
+
+                <hr>
+
+
+                <button type="button" (click)="printTemplate()" class="btn btn-primary">Imprimir</button>
+
+                <!-- FACTURA -->
+                <div *ngIf="invoice" id="PrintTemplateTpl" #PrintTemplateTpl class="text-black">
+
+                    <div class="text-center">
+                        <address>
+                            <h3 class="mb-1"> &nbsp;<b class="text-black">{{empresa.name}}</b></h3>
+                            <p class="mb-0 text-black">Nit {{empresa.nit}}</p>
+                            <p class="mb-0 text-black"> {{empresa.address}} </p>
+                            <p class="mb-0 text-black">Teléfono {{empresa.phone}} </p>
+                            <p class="mb-0 text-black">{{empresa.email}}</p>
+                        </address>
+                    </div>
+                    <div class="">
+                        <address style="line-height: normal;">
+                            <h4 class="text-black mb-0">Cliente o Razón Social:</h4>
+                            <p class="text-black mb-1 text-capitalize" *ngIf="invoice.client" > {{ invoice.client.name + ' '+ invoice.client.lastname }} </p>
+                            <p class="text-black mb-1" *ngIf="!invoice.client" >Consumidor Final </p>
+                            <p class="text-black mb-0" *ngIf="invoice.client?.phone" > {{ invoice.client?.phone }} </p>
+                            <p class="text-black mb-0" *ngIf="invoice.client?.city" > {{ invoice.client?.city }} </p>
+                            <p class="text-black"> {{ invoice.client?.address }}
+                            <p class="">Factura: {{ invoice.invoice }} </p>
+                            <p class="text-black"> <b>Fecha :</b> <i class="fa fa-calendar"></i> {{ invoice.fecha | date: 'short' }} </p>
+                        </address>
+                    </div>
+
+                    <!-- ITEMS -->
+                    <div>
+                        <table class="table table-borderless table-hover table-sm">
+                            <tbody style="color: black;">
+                                <tr *ngFor="let item of invoice.items" class="trHover">
+                                    <td class="py-0" style="line-height: 0.8rem">
+                                        <small class="text-wrap"> {{ item.quantity }} x {{item.price | currency: 'COP'}} </small> <br>
+                                        <small class="text-wrap"> {{ item.description }} </small>
+                                    </td>
+                                    <td class="py-0"> <small class="text-wrap"> {{ item.quantity * item.price | currency: 'COP' }} </small> </td>
+                                </tr>
+
+                                <tr class="" style="border-top: 2px solid black;">
+                                    <td>
+                                        <h6 class="mb-0 text-wrap text-left text-black">Sub-total</h6>
+                                    </td>
+                                    <td colspan="2" class="fw-bold">
+                                        <h6 class="mb-0 text-wrap text-rigth text-black"> {{ invoice.amount| currency: 'COP' }} </h6>
+                                    </td>
+                                </tr>
+
+                                <!-- TOTAL -->
+                                <tr class="" style="border-top: 2px solid black;">
+                                    <td>
+                                        <h6 class="mb-0 text-wrap text-left text-black">Total</h6>
+                                    </td>
+                                    <td colspan="2" class="fw-bold">
+                                        <h6 class="mb-0 text-wrap text-rigth text-black"> {{ invoice.amount | currency: 'COP'}} </h6>
+                                    </td>
+                                </tr>
+                                <!-- TOTAL -->
+
+                                <!-- BONO -->
+                                <tr *ngIf="saldo > 0" class="" style="border-top: 2px solid black;">
+                                    <td>
+                                        <h6 class="mb-0 text-wrap text-left text-black">Bono</h6>
+                                    </td>
+                                    <td colspan="2" class="fw-bold">
+                                        <h6 class="mb-0 text-wrap text-rigth text-black"> {{ saldo * -1| currency: 'COP' }} </h6>
+                                    </td>
+                                </tr>
+
+                                <!-- RESTANTE -->
+                                <tr *ngIf="restante !== 0" class="" style="border-top: 2px solid black;">
+                                    <td>
+                                        <h6 class="mb-0 text-wrap text-left text-black">Restante</h6>
+                                    </td>
+                                    <td colspan="2" class="fw-bold">
+                                        <h6 class="mb-0 text-wrap text-rigth text-black"> {{ restante | currency: 'COP'}} </h6>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

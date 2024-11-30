@@ -1,0 +1,133 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Lista de Categorias</h4>
+                <h6 class="card-subtitle"></h6>
+                <div class="table-responsive">
+                    <table id="demo-foo-addrow" class="table m-t-30 table-hover contact-list" data-page-size="10">
+                        <thead>
+
+                            <!-- usuario name role address img valid status fecha -->
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr *ngIf="categories.length === 0">
+                                <td colspan="3">No se ha creado ninguna categoria...</td>
+                            </tr>
+
+                            <tr *ngFor="let category of categories">
+                                <td> {{ category.name }} </td>
+                                <td>
+                                    <button (click)="changeStatus(category)" type="button" class="btn btn-sm" [ngClass]="{'btn-success': category.status, 'btn-danger': !category.status}">
+                                        <span *ngIf="category.status">Activa</span>
+                                        <span *ngIf="!category.status">Desactiva</span>
+                                    </button>
+
+                                </td>
+                                <td>
+                                    <button (click)="selectedCategory(category)" type="button" class="btn btn-sm btn-icon btn-pure btn-outline delete-row-btn" data-toggle="modal" data-target="#edit-category"><i class="ti-pencil" aria-hidden="true"></i></button>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="2">
+                                    <button type="button" class="btn btn-info btn-rounded" data-toggle="modal" data-target="#add-category">Crear Categoria</button>
+                                </td>
+
+                                <td colspan="7">
+                                    <div class="text-right">
+                                        <ul class="pagination"> </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================= 
+MODAL AGREGAR CATEGORIA
+======================================================== -->
+<div id="add-category" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="add-category-modal" aria-hidden="true" #modalNewUser>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="add-category-modal">Nueva Categoria</h4>
+            </div>
+            <div class="modal-body">
+
+                <form class="form-horizontal form-material" autocomplete="off" [formGroup]="createForm" (ngSubmit)="createCategory()">
+
+                    <div class="form-group has-danger">
+
+                        <div class="col-md-12 m-b-20">
+                            <input formControlName="name" type="text" class="form-control" placeholder="Nombre">
+                            <div *ngIf="validate('name')" class="form-control-feedback">
+                                <small> El nombre de la categoria es obligatoria </small>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <button type="submit" class="btn btn-info waves-effect btn-block">Crear</button>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<!-- ========================================================= 
+MODAL EDITAR CATEGORIA
+======================================================== -->
+<div id="edit-category" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="edit-category-modal" aria-hidden="true" #modalNewUser>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="edit-category-modal">Editar Categoria</h4>
+            </div>
+            <div class="modal-body">
+
+                <form class="form-horizontal form-material" autocomplete="off" [formGroup]="updateForm" (ngSubmit)="updateCategory()">
+
+                    <div class="form-group has-danger">
+
+                        <div class="col-md-12 m-b-20">
+                            <input formControlName="name" type="text" class="form-control" placeholder="Nombre">
+                            <div *ngIf="validateUpdate('name')" class="form-control-feedback">
+                                <small> El nombre de la categoria es obligatoria </small>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <button type="submit" class="btn btn-info waves-effect btn-block">Actualizar</button>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>

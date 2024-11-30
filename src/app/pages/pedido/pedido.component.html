@@ -1,0 +1,262 @@
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="card" *ngIf="pedido">
+            <div class="card-body">
+                <div class="d-flex flex-wrap justify-content-between align-item-center ">
+
+                    <div>
+                        <p class="mb-0 fs-3"> {{ pedido.estado }} </p>
+                    </div>
+                    <div>
+                        <select (change)="changeEstado(sEst.value)" #sEst class="form-control custom-select" data-placeholder="Choose a Category" tabindex="1" [value]="pedido.estado">
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="Procesando">Procesando</option>
+                            <option value="Enviando">Enviando</option>
+                            <option value="Entregado">Entregado</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-body printableArea" *ngIf="pedido">
+            <h3><b>PEDIDO</b> <span class="pull-right"># {{pedido.pedido}} </span></h3>
+            <hr>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="pull-left">
+                        <address>
+                            <h3> &nbsp;<b class="text-danger">{{empresa.name}}</b></h3>
+                            <p class="text-muted m-l-5">{{empresa.address}}
+                        </address>
+                    </div>
+                    <div class="pull-right text-right">
+                        <address>
+                            <h3>Cliente o Razón Social,</h3>
+                            <h4 class="font-bold"> {{ pedido.client.name + ' '+ pedido.client.lastname  }} </h4>
+                            <p class="text-muted m-l-30"> {{ pedido.client.address }}
+                            <p class="m-t-30">
+                                <b>Fecha :</b> <i class="fa fa-calendar"></i> {{ pedido.fecha | date: 'short' }}
+                            </p>
+                        </address>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="table-responsive m-t-40" style="clear: both;">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">#</th>
+                                    <th>Producto</th>
+                                    <th class="text-right">Cantidad</th>
+                                    <th class="text-right">Precio</th>
+                                    <th class="text-right">Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of pedido.items; let i = index">
+                                    <td class="text-center"> {{ i + 1 }} </td>
+                                    <td> {{ item.description }} </td>
+                                    <td class="text-right"> {{ item.quantity }} </td>
+                                    <td class="text-right"> {{ item.price | currency: 'COP' }} </td>
+                                    <td class="text-right"> {{ item.price * item.quantity | currency: 'COP' }} </td>
+                                </tr>
+                                <tr *ngIf="pedido.amount < this.menS || (pedido.amount - pedido.saldo) < this.menS">
+                                    <td class="text-center"> {{ pedido.items.length + 1 }} </td>
+                                    <td> Domicilio </td>
+                                    <td class="text-right"> 1 </td>
+                                    <td class="text-right">$ 5.000</td>
+                                    <td class="text-right">$ 5.000</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="pull-right m-t-30 text-right">
+                        <p>Sub-Total: {{ pedido.amount | currency:'COP' }} </p>
+                        <p class="text-danger" *ngIf="pedido.saldo"><b>Bono :</b> {{ pedido.saldo * -1 | currency:'COP' }} </p>
+                        <hr>
+                        <h3><b>Total :</b>
+                            <span *ngIf="pedido.saldo">{{ pedido.amount - pedido.saldo| currency:'COP' }}</span>
+                            <span *ngIf="!pedido.saldo">{{ pedido.amount | currency:'COP' }}</span>
+
+                        </h3>
+                    </div>
+                    <div class="clearfix"></div>
+                    <hr>
+                    <div class="text-right">
+                        <button class="btn btn-danger" type="button" data-toggle="modal" data-target="#facturar"> 
+                            <span *ngIf="!pedido.invoice">Cobrar</span>
+                            <span *ngIf="pedido.invoice">Factura</span>                             
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL CREAR FACTURA -->
+<div class="modal fade" id="facturar" tabindex="-1" aria-labelledby="facturarLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" *ngIf="pedido">
+            <div class="modal-header">
+                <h5 class="modal-title" id="facturarLabel">Crear Factura</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="pb-2">
+                    <p class="mb-3 text-center">TOTAL</p>
+                    <h4 class="mb-3 display-5 text-center text-break"> {{ pedido.amount | currency:'COP' : 'symbol' : '1.0-0' }} </h4>
+                    <p class="mb-2 text-center" *ngIf="payments.length > 0" [ngClass]="{'text-success': restante === 0, 'text-danger': restante < pedido.amount || restante > pedido.amount}"> Restante {{ restante | currency:'COP' : 'symbol' : '1.0-0' }} </p>
+                </div>
+                <hr *ngIf="!pedido.invoice">
+
+                <!-- PAGOS -->
+                <div *ngIf="!pedido.invoice">
+                    <h4 class="mb-3 text-center"> Agregar Pagos </h4>
+
+                    <!-- TIPO DE PAGO -->
+                    <div class="form-group">
+                        <label class="control-label">Metodo de pago</label>
+                        <select class="form-control custom-select" #typeP>
+                            <option value="efectivo">Efectivo</option>
+                            <option value="transferencia">Transferencia</option>
+                            <option value="tarjeta">Tarjeta</option>
+                        </select>
+                    </div>
+
+                    <!-- MONTO -->
+                    <div class="form-group">
+                        <label class="control-label">Monto</label>
+                        <input type="number" min="0" class="form-control" placeholder="Agrega un monto" #montoP>
+                    </div>
+
+                    <button [disabled]="pedido.items.length === 0" (click)="addPay(montoP.value, typeP.value)" type="button" class="btn btn-primary w-100">Agregar</button>
+
+                </div>
+
+                <!-- LISTA DE PAGOS -->
+                <div *ngIf="payments.length > 0 " class="table-responsive" style="clear: both;">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Metodo</th>
+                                <th class="text-right">Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let pay of payments; let i = index">
+                                <td>
+                                    <a (click)="delPay(i)" class="pointer text-danger"><i class="text-danger ti-trash"></i></a>
+                                </td>
+                                <td> {{ pay.type }} </td>
+                                <td class="text-right"> {{ pay.monto | currency: 'COP' }} </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <hr>
+
+                <button *ngIf="!pedido.invoice" type="button" (click)="createInvoice()" class="btn btn-primary">Crear Factura</button>
+                <button *ngIf="pedido.invoice" type="button" (click)="printTemplate()" class="btn btn-primary">Imprimir</button>
+
+                <!-- FACTURA -->
+                <div *ngIf="pedido.invoice" id="PrintTemplateTpl" #PrintTemplateTpl class="text-black">
+
+                    <div class="text-center">
+                        <address>
+                            <h3> &nbsp;<b class="text-black">{{ empresa.name }}</b></h3>
+                            <p class="mb-0 text-black">Nit {{empresa.nit}}</p>
+                            <p class="mb-0 text-black">{{empresa.address}}</p>
+                            <p class="mb-0 text-black">Teléfono {{empresa.phone}}</p>
+                            <p class="mb-0 text-black">{{empresa.email}}</p>
+                        </address>
+                    </div>
+                    <div class="">
+                        <address style="line-height: normal;">
+                            <h4 class="text-black mb-0">Cliente o Razón Social:</h4>
+                            <p class="text-black mb-0"> {{ pedido.client.name + ' '+ pedido.client.lastname  }} </p>
+                            <p class="text-black mb-0" *ngIf="pedido.client.phone" > {{ pedido.client.phone }} </p>
+                            <p class="text-black mb-0" *ngIf="pedido.client.city" > {{ pedido.client.city }} </p>
+                            <p class="text-black"> {{ pedido.client.address }}
+                            <p class="">Factura: {{ pedido.invoice.invoice }} </p>
+                            <p class="text-black"> <b>Fecha :</b> <i class="fa fa-calendar"></i> {{ pedido.fecha | date: 'short' }} </p>
+                        </address>
+                    </div>
+
+                    <!-- ITEMS -->
+                    <div>
+                        <table class="table table-borderless table-hover table-sm">
+                            <tbody style="color: black;">
+                                <tr *ngFor="let item of pedido.invoice.items" class="trHover">
+                                    <td class="py-0" style="line-height: 0.8rem">
+                                        <small class="text-wrap"> {{ item.quantity }} x {{item.price | currency: 'COP'}} </small> <br>
+                                        <small class="text-wrap"> {{ item.description }} </small>
+                                    </td>
+                                    <td class="py-0"> <small class="text-wrap"> {{ item.quantity * item.price | currency: 'COP' }} </small> </td>
+                                </tr>
+
+                                <tr class="" style="border-top: 2px solid black;">
+                                    <td>
+                                        <h6 class="mb-0 text-wrap text-left text-black">Sub-total</h6>
+                                    </td>
+                                    <td colspan="2" class="fw-bold">
+                                        <h6 class="mb-0 text-wrap text-rigth text-black"> {{ pedido.amount| currency: 'COP' }} </h6>
+                                    </td>
+                                </tr>
+
+
+                                <!-- TOTAL -->
+                                <tr class="" style="border-top: 2px solid black;">
+                                    <td>
+                                        <h6 class="mb-0 text-wrap text-left text-black">Total</h6>
+                                    </td>
+                                    <td colspan="2" class="fw-bold">
+                                        <h6 class="mb-0 text-wrap text-rigth text-black"> {{ pedido.amount | currency: 'COP'}} </h6>
+                                    </td>
+                                </tr>
+                                <!-- TOTAL -->
+
+                                <!-- BONO -->
+                                <tr *ngIf="pedido.saldo" class="" style="border-top: 2px solid black;">
+                                    <td>
+                                        <h6 class="mb-0 text-wrap text-left text-black">Bono</h6>
+                                    </td>
+                                    <td colspan="2" class="fw-bold">
+                                        <h6 class="mb-0 text-wrap text-rigth text-black"> {{ pedido.saldo * -1| currency: 'COP' }} </h6>
+                                    </td>
+                                </tr>
+
+                                <!-- RESTANTE -->
+                                <tr *ngIf="restante !== 0" class="" style="border-top: 2px solid black;">
+                                    <td>
+                                        <h6 class="mb-0 text-wrap text-left text-black">Restante</h6>
+                                    </td>
+                                    <td colspan="2" class="fw-bold">
+                                        <h6 class="mb-0 text-wrap text-rigth text-black"> {{ restante | currency: 'COP'}} </h6>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

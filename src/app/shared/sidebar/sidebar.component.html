@@ -1,0 +1,96 @@
+<!-- ============================================================== -->
+<!-- Left Sidebar - style you can find in sidebar.scss  -->
+<!-- ============================================================== -->
+<aside class="left-sidebar">
+    <!-- Sidebar scroll-->
+    <div class="scroll-sidebar">
+        <!-- Sidebar navigation-->
+        <nav class="sidebar-nav">
+            <ul id="sidebarnav">
+                <li class="user-profile">
+
+                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false">
+                        <img [src]="user.getImage" alt="user" />
+                        <span class="hide-menu"> {{ user.name }} </span>
+                    </a>
+
+                    <ul aria-expanded="false" class="collapse">
+                        <li><a [routerLink]="['/dashboard/perfil', user.uid]" routerLinkActive="active">Mi Perfil </a></li>
+                    </ul>
+
+                </li>
+                <li class="nav-devider"></li>
+                <li class="nav-small-cap">EMPRESA</li>
+                <li>
+                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false">
+                        <i class="mdi mdi-gauge"></i>
+                        <span class="hide-menu">Dashboard 
+                            <!-- <span class="label label-rouded label-themecolor pull-right">4</span> -->
+                        </span>
+                    </a>
+
+                    <ul aria-expanded="false" class="collapse">
+                        <li><a [routerLink]="['/dashboard']" routerLinkActive="active">Dashboard </a></li>
+                        <!-- <li><a routerLinkActive="active" [routerLink]="['/dashboard/abonados']">Abonados </a></li> -->
+                        <li><a routerLinkActive="active" [routerLink]="['/dashboard/clientes']">Clientes </a></li>
+                        <li><a routerLinkActive="active" [routerLink]="['/dashboard/usuarios']">Usuarios </a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false">
+                        <i class="mdi mdi-monitor"></i>
+                        <span class="hide-menu">Facturación 
+                            <!-- <span class="label label-rouded label-themecolor pull-right">4</span> -->
+                        </span>
+                    </a>
+
+                    <ul aria-expanded="false" class="collapse">
+                        <li><a [routerLink]="['/dashboard/facturar']" routerLinkActive="active">Facturar </a></li>
+                        <li><a [routerLink]="['/dashboard/facturas']" routerLinkActive="active">Facturas </a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false">
+                        <i class="mdi mdi-truck"></i>
+                        <span class="hide-menu">Pedidos 
+                            <!-- <span class="label label-rouded label-themecolor pull-right">4</span> -->
+                        </span>
+                    </a>
+
+                    <ul aria-expanded="false" class="collapse">
+                        <li><a [routerLink]="['/dashboard/pedidos']" routerLinkActive="active">Pedidos </a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false">
+                        <i class="mdi mdi-bullseye"></i>
+                        <span class="hide-menu">Productos</span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse">
+                        <li><a [routerLink]="['/dashboard/productos']" routerLinkActive="active">Productos</a></li>
+                        <li><a [routerLink]="['/dashboard/categorias']" routerLinkActive="active">Categorias</a></li>
+                        <li><a [routerLink]="['/dashboard/subcategorias']" routerLinkActive="active">Subcategorias</a></li>
+                        <li><a [routerLink]="['/dashboard/movimientos']" routerLinkActive="active">Movimientos</a></li>
+                    </ul>
+                </li>
+
+                <!-- <li>
+                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false">
+                        <i class="mdi mdi-file"></i>
+                        <span class="hide-menu">Mantenimientos</span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse">
+                        <li><a [routerLink]="['/dashboard/preventivos']" routerLinkActive="active">Preventivos</a></li>
+                        <li><a [routerLink]="['/dashboard/correctivos']" routerLinkActive="active">Correctivos</a></li>
+                    </ul>
+                </li> -->
+
+            </ul>
+        </nav>
+        <!-- End Sidebar navigation -->
+    </div>
+    <!-- End Sidebar scroll-->
+</aside>

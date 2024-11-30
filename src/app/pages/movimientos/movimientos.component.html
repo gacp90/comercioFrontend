@@ -1,0 +1,110 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between flex-wrap mt-1">
+
+                    <div>
+                        <h4 class="card-title">Lista de Productos</h4>
+                        <h6 class="card-subtitle">Total: {{ total | number }}</h6>
+
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-success btn-rounded" data-toggle="modal" data-target="#add-excel">Importar Excel</button>
+                        <button type="button" class="btn btn-info btn-rounded" data-toggle="modal" data-target="#add-product">Agregar Producto</button>
+                    </div>
+
+                </div>
+
+                <div class="d-flex justify-content-between flex-wrap mt-1">
+                    <div class="my-2">
+                        <input type="text" id="demo-input-search2" placeholder="Buscar Productos" (keyup)="search(buscador.value)" (keyup.enter)="search(buscador.value)" class="form-control m-0" #buscador>
+                        <small *ngIf="resultados > 0" class="text-muted animated fadeIn">Resultados: {{resultados}}</small>
+                    </div>
+
+                    <div class="my-2">
+
+                        <label for="mostrar" class="me-2">Mostrar: </label>
+                        <select name="" id="" [value]="query.hasta" #mostrar (change)="limiteChange(mostrar.value)">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                            <option value="250">250</option>
+                            <option value="500">500</option>
+                            <option value="1000">1000</option>
+                        </select>
+
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="demo-foo-addrow" class="table m-t-30 table-hover contact-list" data-page-size="10">
+                        <thead>
+                            <tr>
+                                <th>Codigo</th>
+                                <th>Nombre</th>
+                                <th>Categoria</th>
+                                <th>Subcategoria</th>
+                                <th>Descripción</th>
+                                <th>Tipo</th>
+                                <th>Antes</th>
+                                <th>Cantidad</th>
+                                <th>Stock</th>
+                                <th>Usuario</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr *ngIf="products.length == 0">
+                                <td colspan="8">
+                                    <h3 class="mb-0 text-center"> Aun no existen registros de movimientos productos... </h3>
+                                </td>
+                            </tr>
+
+                            <tr *ngFor="let product of products">
+
+                                <td>{{product.sku}}</td>
+                                <td>
+                                    {{product.name}}
+                                </td>
+                                <td>{{product.categoria}}</td>
+                                <td>{{product.subcategoria}}</td>
+                                <td>
+                                    <span *ngIf="!product.invoice">
+                                        {{product.description}}
+                                    </span>
+                                    <a *ngIf="product.invoice" [routerLink]="['/dashboard/factura', product.invoice]">
+                                        {{product.description}}
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="badge" [ngClass]="{'badge-success': product.type === 'Agregados', 'badge-primary': product.type === 'Salida', 'badge-danger': product.type === 'Eliminados'}">
+                                        {{product.type}}
+                                    </span>
+                                </td>
+                                <td>{{product.befored}}</td>
+                                <td>{{product.qty}}</td>
+                                <td>{{product.stock}}</td>
+                                <td>{{product.cajero.name}}</td>
+                                <td>{{product.fecha | date: 'short'}}</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="8">
+                                    <div class="btn-group" role="group" aria-label="First group">
+                                        <button [disabled]="query.desde === 0" (click)="cambiarPagina(query.hasta * -1)" type="button" class="btn btn-dark text-white">Atras</button>
+                                        <button [disabled]="( query.desde + query.hasta ) >= total" (click)="cambiarPagina(query.hasta)" type="button" class="btn btn-dark text-white">Siguiente</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

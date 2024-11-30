@@ -1,0 +1,279 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between flex-wrap mt-1">
+
+                    <div>
+                        <h4 class="card-title">Lista de Productos</h4>
+                        <h6 class="card-subtitle">Total: {{ total | number }}</h6>
+
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-success btn-rounded" data-toggle="modal" data-target="#add-excel">Importar Excel</button>
+                        <button type="button" class="btn btn-info btn-rounded" data-toggle="modal" data-target="#add-product">Agregar Producto</button>
+                    </div>
+
+                </div>
+
+                <div class="d-flex justify-content-between flex-wrap mt-1">
+                    <div class="my-2">
+                        <input type="text" id="demo-input-search2" placeholder="Buscar Productos" (keyup)="search(buscador.value)" (keyup.enter)="search(buscador.value)" class="form-control m-0" #buscador>
+                        <small *ngIf="resultados > 0" class="text-muted animated fadeIn">Resultados: {{resultados}}</small>
+                    </div>
+
+                    <div class="my-2">
+
+                        <label for="mostrar" class="me-2">Mostrar: </label>
+                        <select name="" id="" [value]="query.hasta" #mostrar (change)="limiteChange(mostrar.value)">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                            <option value="250">250</option>
+                            <option value="500">500</option>
+                        </select>
+
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="demo-foo-addrow" class="table m-t-30 table-hover contact-list" data-page-size="10">
+                        <thead>
+                            <tr>
+                                <th>Codigo</th>
+                                <th>Nombre</th>
+                                <th>Tipo</th>
+                                <th>Precio</th>
+                                <th>Inventario</th>
+                                <th>Categoria</th>
+                                <th>Subcategoria</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr *ngIf="products.length == 0">
+                                <td colspan="8">
+                                    <h3 class="mb-0 text-center"> Aun no existen registros de productos... </h3>
+                                </td>
+                            </tr>
+
+                            <tr *ngFor="let product of products">
+
+                                <td>{{product.sku}}</td>
+                                <td>
+                                    <a routerLink="/dashboard/producto/{{product.pid!}}">
+                                        {{product.name}}
+                                    </a>
+                                </td>
+                                <td>{{product.type}}</td>
+                                <td>
+                                    <span *ngIf="!product.offert">
+                                        {{product.price | currency: 'COP'}}
+                                    </span>
+                                    <span *ngIf="product.offert">
+                                        <small><del>{{product.price | currency: 'COP'}}</del></small>
+                                        <br>
+                                        {{ product.offertPrice | currency: 'COP'}}
+
+                                    </span>
+                                </td>
+                                <td>{{product.inventory}}</td>
+                                <td>{{product.categoria?.name!}}</td>
+                                <td>{{product.subcategoria?.name!}}</td>
+                                <td>
+                                    <button (click)="changeStatus(product)" type="button" class="btn btn-sm" [ngClass]="{'btn-success': product.status, 'btn-danger': !product.status}">
+                                        <span *ngIf="product.status">Activo</span>
+                                        <span *ngIf="!product.status">Desactivo</span>
+                                    </button>
+                                </td>
+                                <td>
+                                    <a routerLink="/dashboard/producto/{{product.pid!}}" class="btn btn-sm btn-icon btn-pure btn-outline delete-row-btn">
+                                        <i class="ti-pencil" aria-hidden="true"></i>
+                                    </a>
+                                </td>
+
+                            </tr>
+
+
+
+                        </tbody>
+                        <tfoot>
+                            <tr>
+
+                                <td colspan="8">
+
+                                    <div class="btn-group" role="group" aria-label="First group">
+                                        <button [disabled]="query.desde === 0" (click)="cambiarPagina(query.hasta * -1)" type="button" class="btn btn-dark text-white">Atras</button>
+                                        <button [disabled]="( query.desde + query.hasta ) >= total" (click)="cambiarPagina(query.hasta)" type="button" class="btn btn-dark text-white">Siguiente</button>
+                                    </div>
+
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================= 
+MODAL AGREGAR PRODUCT
+======================================================== -->
+<div id="add-product" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" #modalNewUser>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">Nuevo Producto</h4>
+            </div>
+            <div class="modal-body">
+
+
+                <form class="form-horizontal form-material" autocomplete="off" [formGroup]="newProductForm" (ngSubmit)="createProduct()">
+
+                    <div class="form-group has-danger">
+
+                        <div class="col-md-12 m-b-20">
+                            <label for="">Codigo</label>
+                            <input formControlName="sku" type="text" class="form-control" placeholder="sku - codigo **">
+                            <div *ngIf="validateNewForm('sku')" class="form-control-feedback">
+                                <small> El codigo es obligatorio </small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <label for="">Nombre</label>
+                            <input formControlName="name" type="text" class="form-control" placeholder="Nombre **">
+                            <div *ngIf="validateNewForm('name')" class="form-control-feedback">
+                                <small> El nombre es obligatorio </small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <label for="estado"> Tipo</label>
+                            <select formControlName="type" class="form-control" id="estado">
+                                <option value="Unidad" >Unidad</option>
+                                <option value="Granel" >Granel</option>
+                            </select>
+                        </div>
+
+                        <!-- DESCIPCION DEL PRODUCTO -->
+                        <div class="form-group">
+                            <label>Descripción del producto</label>
+                            <textarea formControlName="description" class="form-control" rows="3" #description placeholder="Escribe la descripción del producto..."></textarea>
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <label for="">Costo</label>
+                            <input formControlName="cost" type="number" min="0" class="form-control" placeholder="Costo">
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <label for="">Precio</label>
+                            <input formControlName="price" type="number" class="form-control" placeholder="Precio">
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <label for="">Precio al Mayor</label>
+                            <input formControlName="wholesale" type="number" class="form-control" placeholder="Precio al mayor">
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <label for="">Precio VIP</label>
+                            <input formControlName="vip" type="number" class="form-control" placeholder="Precio VIP">
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <label for="">Stock</label>
+                            <input formControlName="stock" type="number" class="form-control" placeholder="Stock">
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <label for="">Minimo</label>
+                            <input formControlName="min" type="number" class="form-control" placeholder="Min">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-12">Seleccionar Categoria</label>
+                            <div class="col-sm-12">
+                                <select formControlName="categoria" class="form-control form-control-line" (change)="loadSubcategories(categoryS.value)" #categoryS>
+                                    <option value="none" disabled>Seleccionar</option>
+                                    
+                                    <ng-container *ngFor="let category of categories" >
+                                        <option *ngIf="category.status" [value]="category.catid"> {{category.name}} </option>
+                                    </ng-container>                                
+    
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-12">Seleccionar Subcategoria</label>
+                            <div class="col-sm-12">
+                                <select formControlName="subcategoria" class="form-control form-control-line">
+                                    <option value="none" disabled>Seleccionar</option>
+                                    
+                                    <ng-container *ngIf="subcategories.length > 0">
+                                       <ng-container *ngFor="let subcategory of subcategories" >
+                                            <option *ngIf="subcategory.status" [value]="subcategory.subcaid"> {{subcategory.name}} </option>
+                                        </ng-container>                                
+                                    </ng-container>
+    
+                                </select>
+                            </div>
+                        </div>
+
+                        <small class="mb-0 text-muted text-break"> <span class="fw-bold">NOTA:</span> Los campos de texto que tengan ** son obligatorios.</small>
+
+                    </div>
+
+                    <button type="submit" [disabled]="savingNew" class="btn btn-info waves-effect btn-block">Guardar</button>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================= 
+MODAL AGREGAR PRODUCTOS MASIVOS CON EXCEL
+======================================================== -->
+<div id="add-excel" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabelExcel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabelExcel">Agregar Productos Con Excel</h4>
+            </div>
+            <div class="modal-body">
+
+                <!-- <h4 class="text-muted">Importar Productos <span> <a class="btn btn-sm text-primary" type="button" (click)="plantilla()" >Descargar Plantilla</a> </span></h4> -->
+
+                <div class="row">
+                    <div class="col-10">
+                        <input type="file" class="form-control form-control-sm" (change)="selectFileExcel($event)" placeholder="Importar" accept=".xlsx">
+                    </div>
+                    <div class="col-auto">
+                        <button [disabled]="sendExcel" type="button" class="btn btn-sm btnW btn-primary waves-effect waves-light mt-2" (click)="UploadExcel()">
+                            <span *ngIf="!sendExcel" >Importar</span>
+                            <span *ngIf="sendExcel" >Cargando...</span>
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

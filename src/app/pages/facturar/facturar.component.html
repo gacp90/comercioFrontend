@@ -1,0 +1,349 @@
+<!-- BOTONES -->
+<div class="d-flex flex-wrap gap-3 mb-4">            
+    <button type="button" class="btn btn-success shadow" data-toggle="modal" data-target="#modalNewClient">
+        <i class="mdi mdi-account-plus"></i>
+        Crear Cliente
+    </button>
+    <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#modalProductos">
+        <i class="mdi mdi-dropbox"></i>
+        Buscar Producto
+    </button>    
+</div>
+<!-- BOTONES -->
+
+<div class="d-flex flex-wrap gap-2">
+
+    <!-- PRODUCTOS -->
+    <div class="card col-md-8 p-0">
+        <div class="card-body">
+
+            <!-- CLIENTE -->
+            <div class="d-flex flex-wrap gap-3">
+                <div class="col-md-6">
+                    <p class="mb-0">Nombre o Razón Social</p>
+                    <h3 class="box-title m-b-0"> {{ client.name }} <span *ngIf="client.lastname" > {{client.lastname}} </span> </h3>
+                </div>
+                <div class="col-md-6">
+                    <p class="mb-0">CC/NIT</p>
+                    <h3 class="m-b-0"> {{client.cedula || '--- -----'}} </h3>                    
+                </div>
+            </div>
+            
+            <div class="col-12">
+                <p class="mb-0">Dirección</p>
+                <h3 class="m-b-0"> {{ client.address || 'no aplica' }} </h3>
+            </div>
+
+            <div class="d-flex flex-wrap gap-3">
+                <div class="col-md-6">
+                    <p class="mb-0">Telefono</p>
+                    <h3 class="m-b-0"> {{client.phone || '--- -----'}} </h3>                    
+                </div>
+                <div class="col-6">
+                    <p class="mb-0">Email</p>
+                    <h3 class="m-b-0">{{ client.email || '----------' }}</h3>
+                </div>
+            </div>
+                <!-- CLIENTE -->
+            
+            <hr>
+
+            <div class="w-100">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Buscar producto con codigo de barra" (keyup.enter)="searchCode(search.value)" #search>
+                </div>
+            </div>
+
+            <hr>
+
+            <h3 class="text-center mb-1">ITEMS</h3>
+            <div class="table-responsive" style="clear: both;">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th class="text-center">#</th>
+                            <th>Producto</th>
+                            <th class="text-right">Cantidad</th>
+                            <th class="text-right">Precio</th>
+                            <th class="text-right">Monto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <tr *ngIf="items.length === 0">
+                            <td colspan="6" class="text-center">Aun no has seleccionado ningun producto...</td>
+                        </tr>
+                        <tr *ngFor="let item of items; let i = index">
+                            <td>
+                                <i class="text-danger ti-trash"></i>
+                            </td>
+                            <td class="text-center">{{i+1}}</td>
+                            <td> {{ item.description }} </td>
+                            <td class="text-right"> {{ item.quantity }} </td>
+                            <td class="text-right"> {{ item.price | currency : 'COP' : 'symbol' : '1.0-0' }} </td>
+                            <td class="text-right"> {{ item.quantity * item.price | currency : 'COP' : 'symbol' : '1.0-0' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-12">
+                <div class="pull-right m-t-30 text-right">
+                    <p>Sub-Total: {{total | currency: 'COP' : 'symbol' : '1.0-0' }} </p>
+                    <hr>
+                    <h3><b>Total :</b> {{total | currency: 'COP' : 'symbol' : '1.0-0'}}</h3>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+        
+    </div>
+    <!-- PRODUCTOS -->
+    
+    <div class="col-md-4">
+        
+        <div class="card">
+            <div class="card-body">
+                
+                <!-- BUSCAR Y SELECCIONAR CLIENTE -->
+                <div class="w-100">
+                    <div class="form-group mb-0">
+                        <label for="searchC">Buscar Cliente</label>
+                        <input id="searchC" type="text" class="form-control" placeholder="Buscar Cliente" (keyup)="searchClient(searchC.value)" #searchC>
+                    </div>
+                    <div *ngIf="listClients.length > 0" class="shadow rounded bg-white" style="z-index: 1; position: absolute; max-height: 200px; overflow-y: auto;">
+                        <div class="w-100">
+
+                            <p class="mb-0 text-muted pl-2"><small> resultados: {{ listClients.length }} </small> </p>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item list-group-item-action" *ngFor="let cliente of listClients">
+                                    <a class="pointer" (click)="selectClient(cliente)" >
+                                        <h5 class="mb-0"> {{ cliente.name }} <span *ngIf="cliente.lastname" > {{ cliente.lastname }} </span></h5>
+                                        <p *ngIf="cliente.cedula" class="mb-0 text-muted"><small> <i class="ti ti-id-badge"></i>  {{ cliente.cedula }} </small> </p>
+                                        <p *ngIf="cliente.email" class="mb-0 text-muted"><small> <i class="ti ti-email"></i> {{ cliente.email }} </small> </p>
+                                    </a>
+                                </li> 
+                            </ul>
+                        </div>
+                        
+                    </div>
+                </div>
+                <!-- BUSCAR Y SELECCIONAR CLIENTE -->          
+    
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+
+                <!-- TOTALES -->
+                <div class="pb-2">
+                    <p class="mb-3 text-center">TOTAL</p>
+                    <h4 class="mb-3 display-5 text-center text-break"> {{ total | currency:'COP' : 'symbol' : '1.0-0' }} </h4>
+                    <p class="mb-2 text-center" *ngIf="payments.length > 0" [ngClass]="{'text-success': restante === 0, 'text-danger': restante < total || restante > total}" > Restante {{ restante | currency:'COP' : 'symbol' : '1.0-0' }} </p>
+                </div>
+                <hr>
+
+                <!-- PAGOS -->
+                <div>
+                    <h4 class="mb-3 text-center"> Agregar Pagos </h4>
+
+                    <!-- TIPO DE PAGO -->
+                    <div class="form-group">
+                        <label class="control-label">Metodo de pago</label>
+                        <select class="form-control custom-select" #typeP>
+                            <option value="efectivo">Efectivo</option>
+                            <option value="transferencia">Transferencia</option>
+                            <option value="tarjeta">Tarjeta</option>
+                        </select>
+                    </div>
+
+                    <!-- MONTO -->
+                    <div class="form-group">
+                        <label class="control-label">Monto</label>
+                        <input type="number" min="0" class="form-control" placeholder="Agrega un monto" #montoP>
+                    </div>
+
+                    <button [disabled]="items.length === 0" (click)="addPay(montoP.value, typeP.value)" type="button" class="btn btn-primary w-100">Agregar</button>
+
+                </div>
+
+                <!-- LISTA DE PAGOS -->
+                <div *ngIf="payments.length > 0 " class="table-responsive" style="clear: both;">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Metodo</th>
+                                <th class="text-right">Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody>                            
+                            <tr *ngFor="let pay of payments; let i = index" >
+                                <td>
+                                    <a (click)="delPay(i)" class="pointer text-danger"><i class="text-danger ti-trash"></i></a> 
+                                </td>
+                                <td> {{ pay.type }} </td>
+                                <td class="text-right"> {{ pay.monto }} </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- CREAR FACTURA -->
+                <hr>
+                <div>
+                    <button (click)="createInvoice()" [disabled]="items.length === 0 || payments.length === 0" type="button" class="btn btn-success w-100">Facturar</button>
+                </div>
+
+
+
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+
+<!-- MODAL BUSCAR PRODUCTO -->
+<div class="modal fade" id="modalProductos" tabindex="-1" aria-labelledby="modalProductosLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalProductosLabel">Buscar Productos</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- MODAL BUSCAR PRODUCTO -->
+
+<!-- MODAL CREAR CLIENTE -->
+<div class="modal fade" id="modalNewClient" tabindex="-1" aria-labelledby="modalNewClientLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalNewClientLabel">Crear CLient</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            
+            <div class="card">
+                <div class="card-body">
+                    <form  autocomplete="off" [formGroup]="newClient" (ngSubmit)="createClient()">
+                        <div class="form-body">
+                            <h3 class="card-title">Información</h3>
+                            <hr>
+
+                            <div class="p-t-20">
+                                <div class="form-group">
+                                    <label class="control-label">Tipo de Cliente</label>
+                                    <select class="form-control custom-select">
+                                        <option value="PERSONA_NATURAL">Persona Natural</option>
+                                        <option value="PERSONA_JURIDICA">Persona Juridica</option>
+                                    </select>
+                                </div>
+                            </div>                        
+
+                            <div class="row ">
+                                <div class="col-md-6">
+                                    <div class="form-group" [ngClass]="{'has-danger': validateClient('name')}" >
+                                        <label class="control-label">Nombres o Razón Social</label>
+                                        <input formControlName="name" type="text" id="firstName" class="form-control" placeholder="Nombres">
+                                        <small *ngIf="validateClient('name')" class="form-control-feedback"> El Nombre es obligatorio </small> 
+                                    </div>
+                                </div>
+                                <!--/span-->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Apellidos</label>
+                                        <input formControlName="lastname" type="text" id="lastName" class="form-control form-control-danger" placeholder="Apellidos">
+                                    </div>
+                                </div>
+                                <!--/span-->
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group" [ngClass]="{'has-danger': validateClient('email')}">
+                                        <label class="control-label">Email</label>
+                                        <input formControlName="email" type="email"  class="form-control" placeholder="Email">
+                                        <small *ngIf="validateClient('email')" class="form-control-feedback"> El email es obligatorio </small>
+                                    </div>
+                                </div>
+                                <!--/span-->
+                                <div class="col-md-6">
+                                    <div class="form-group has-danger" [ngClass]="{'has-danger': validateClient('cedula')}">
+                                        <label class="control-label">CC / NIT</label>
+                                        <input formControlName="cedula" type="tel" class="form-control form-control-danger" placeholder="CC / NIT">                                        
+                                        <small *ngIf="validateClient('cedula')" class="form-control-feedback"> La CC/NIT es obligatoria </small>
+                                    </div>
+                                </div>
+                                <!--/span-->
+                            </div>
+
+                            <div class="row">
+                                <!--/span-->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Telefono</label>
+                                        <input formControlName="phone" type="tel" class="form-control form-control-danger" placeholder="telefono">                                        
+                                    </div>
+                                </div>
+                                <!--/span-->
+                            </div>
+
+                            <!--/ADDRESS-->
+                            <h3 class="box-title m-t-40">Dirección</h3>
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-12 ">
+                                    <div class="form-group">
+                                        <label>Dirección</label>
+                                        <input formControlName="address" type="text" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Ciudad</label>
+                                        <input formControlName="city" type="text" class="form-control">
+                                    </div>
+                                </div>
+                                <!--/span-->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Departamento</label>
+                                        <input formControlName="department" type="text" class="form-control">
+                                    </div>
+                                </div>
+                                <!--/span-->
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> Crear</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- MODAL CREAR CLIENTE -->

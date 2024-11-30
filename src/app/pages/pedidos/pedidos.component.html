@@ -1,0 +1,125 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Lista de pedidos</h4>
+                <div class="row m-t-40">
+                    <!-- TOTAL -->
+                    <div class="col-md-6 col-lg-3 col-xlg-3 pointer" (click)="searchEstado('total')">
+                        <div class="card">
+                            <div class="box bg-primary text-center">
+                                <h1 class="font-light text-white"> {{ total }} </h1>
+                                <h6 class="text-white">Total</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- PENDIENTES -->
+                    <div class="col-md-6 col-lg-3 col-xlg-3 pointer" (click)="searchEstado('Pendiente')">
+                        <div class="card">
+                            <div class="box bg-warning text-center">
+                                <h1 class="font-light text-white"> {{ pendientes }} </h1>
+                                <h6 class="text-white">Pendientes</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ENVIANDO -->
+                    <div class="col-md-6 col-lg-3 col-xlg-3 pointer" (click)="searchEstado('Enviando')">
+                        <div class="card">
+                            <div class="box bg-info text-center">
+                                <h1 class="font-light text-white"> {{ enviandos }} </h1>
+                                <h6 class="text-white">Enviando</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ENTREGADOS -->
+                    <div class="col-md-6 col-lg-3 col-xlg-3 pointer" (click)="searchEstado('Entregado')">
+                        <div class="card">
+                            <div class="box bg-success text-center">
+                                <h1 class="font-light text-white"> {{ entregados }} </h1>
+                                <h6 class="text-white">Entregados</h6>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column -->
+                </div>
+
+                <div class="d-flex justify-content-between flex-wrap mt-1">
+
+                    <div class="my-2">
+
+                        <label for="mostrar" class="me-2">Mostrar: </label>
+                        <select name="" id="" [value]="query.hasta" #mostrar (change)="limiteChange(mostrar.value)">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                            <option value="250">250</option>
+                            <option value="500">500</option>
+                        </select>
+
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table id="demo-foo-addrow" class="table m-t-30 table-hover no-wrap contact-list" data-page-size="10">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Cliente</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Fecha</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr *ngIf="pedidos.length === 0">
+                                <td colspan="6"> No existen registros de pedidos... </td>
+                            </tr>
+
+                            <tr *ngFor="let pedido of pedidos; let i = index">
+                                <td>
+                                    <a [routerLink]="['/dashboard/pedido', pedido.peid]">
+                                        {{ pedido.pedido }}
+                                    </a>
+                                </td>
+                                <td>
+                                    {{ pedido.client.name + ' '+ pedido.client.lastname }}
+                                </td>
+                                <td>{{ pedido.client.email }}</td>
+                                <td>
+                                    <span class="label " [ngClass]="{'label-warning': pedido.estado === 'Pendiente', 'label-primary': pedido.estado === 'Procesando', 'label-info': pedido.estado === 'Enviando', 'label-success': pedido.estado === 'Entregado'}"> {{ pedido.estado }} </span>
+                                </td>
+                                <td> {{ pedido.fecha | date: 'short' }} </td>
+                                <td>
+                                    <a [routerLink]="['/dashboard/pedido', pedido.peid]" class="btn btn-sm btn-icon btn-pure btn-outline delete-row-btn">
+                                        <i class="ti-arrow-top-right" aria-hidden="true"></i>
+                                    </a>
+
+                                    <button type="button" (click)="deletePedido(pedido.peid!, i)" class="btn btn-sm btn-icon btn-pure btn-outline text-danger delete-row-btn">
+                                        <i class="ti-trash" aria-hidden="true"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+
+                                <td colspan="8">
+
+                                    <div class="btn-group" role="group" aria-label="First group">
+                                        <button [disabled]="query.desde === 0" (click)="cambiarPagina(query.hasta * -1)" type="button" class="btn btn-dark text-white">Atras</button>
+                                        <button [disabled]="( query.desde + query.hasta ) >= total" (click)="cambiarPagina(query.hasta)" type="button" class="btn btn-dark text-white">Siguiente</button>
+                                    </div>
+
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

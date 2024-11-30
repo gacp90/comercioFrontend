@@ -1,0 +1,136 @@
+<div class="d-flex flex-wrap gap-2 mb-3">
+    <button type="button" class="btn btn-info btn-rounded" data-toggle="modal" data-target="#consolidadoModal">Consolidado</button>
+</div>
+<div class="d-flex flex-wrap gap-2">
+
+
+    <div class="card col-md-12 p-0">
+        <div class="card-body">
+            <h4 class="card-title">Lista de facturas</h4>
+
+            <div class="d-flex justify-content-between flex-wrap mt-1">
+                <div class="my-2">
+                    <label for="mostrar" class="me-2">Mostrar: </label>
+                    <select name="" id="" [value]="query.hasta" #mostrar (change)="limiteChange(mostrar.value)">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="250">250</option>
+                        <option value="500">500</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table id="demo-foo-addrow" class="table m-t-30 table-hover no-wrap contact-list" data-page-size="10">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Cliente</th>
+                            <th>Monto</th>
+                            <th>Fecha</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let invoice of invoices">
+                            <td>
+                                <a class="pointer" [routerLink]="['/dashboard/factura', invoice.iid]"> {{ invoice.invoice }} </a>
+
+                            </td>
+                            <td>
+                                <span *ngIf="!invoice.client">Consumidor Final</span>
+                                <span *ngIf="invoice.client"> {{ invoice.client.name }} <span *ngIf="invoice.client.lastname"> {{invoice.client.lastname}} </span> </span>
+                                <span *ngIf="!invoice.status" class="label label-danger label-rounded">Cancelada</span>
+
+                            </td>
+                            <td> {{ invoice.amount | currency:'COP' : 'symbol' : '1.0-0' }} </td>
+                            <td> {{ invoice.fecha | date: 'short' }} </td>
+                            <td>
+                                <a [routerLink]="['/dashboard/factura', invoice.iid]" class="btn btn-sm btn-icon btn-pure btn-outline delete-row-btn">
+                                    <i class="ti-arrow-top-right" aria-hidden="true"></i>
+                                </a>
+                                <button type="button" (click)="addFacturaC(invoice)" class="btn btn-sm btn-icon btn-pure btn-outline delete-row-btn text-success">
+                                    <i class="ti-plus" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="8">
+                                <div class="btn-group" role="group" aria-label="First group">
+                                    <button [disabled]="query.desde === 0" (click)="cambiarPagina(query.hasta * -1)" type="button" class="btn btn-dark text-white">Atras</button>
+                                    <button [disabled]="( query.desde + query.hasta ) >= total" (click)="cambiarPagina(query.hasta)" type="button" class="btn btn-dark text-white">Siguiente</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- COLUMN -->
+
+</div>
+
+<!-- ========================================================= 
+MODAL CONSOLIDADO
+======================================================== -->
+<div id="consolidadoModal" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" #modalNewUser>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">Consolidado</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="">
+                    <p class="mb-0 fw-bold">Facturas</p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button *ngFor="let factu of facturasC" class="btn btn-sm btn-primary waves-effect waves-light" type="button">
+                            <span class="btn-label"><i class="mdi mdi-close"></i></span>{{ factu.invoice }}
+                        </button>
+                    </div>
+                </div>
+
+                <hr>
+
+                <button type="button" (click)="printTemplate()" class="btn btn-primary mb-2">Imprimir</button>
+
+                <div id="PrintTemplateTpl" #PrintTemplateTpl class="text-black">
+                    <p class="mb-0 fw-bold">Consolidado de Productos</p>
+                    <div class="">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th class="text-black">Producto</th>
+                                    <th class="text-black text-right">Cant</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of itemsC">
+                                    <td class="text-black" style="line-height: 0.8rem">
+                                        <small class="text-wrap fw-bold"> {{ item.sku }}</small> <br>
+                                        <small class="text-wrap"> {{ item.description }} </small>
+                                    </td>
+                                    <td class="text-right"><dt>{{item.quantity}}</dt></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>

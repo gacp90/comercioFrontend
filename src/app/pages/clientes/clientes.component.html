@@ -1,0 +1,472 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between flex-wrap mt-1">
+
+                    <div>
+                        <h4 class="card-title">Lista de Clientes</h4>
+                        <h6 class="card-subtitle">Total: {{ total | number }}</h6>
+
+                    </div>
+                    <div>
+                        <!-- <button type="button" class="btn btn-info btn-rounded" data-toggle="modal" data-target="#add-client">Agregar Cliente</button> -->
+                    </div>
+
+                </div>
+
+                <div class="d-flex justify-content-between flex-wrap mt-1">
+                    <div class="my-2">
+                        <input type="text" id="demo-input-search2" placeholder="Buscar Clientes" (keyup)="search(buscador.value)" (keyup.enter)="search(buscador.value)" class="form-control m-0" #buscador>
+                        <small *ngIf="resultados > 0" class="text-muted animated fadeIn">Resultados: {{resultados}}</small>
+                    </div>
+
+                    <div class="my-2">
+
+
+                        <label for="mostrar" class="me-2">Mostrar: </label>
+                        <select name="" id="" [value]="limite" #mostrar (change)="limiteChange(mostrar.value)">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                            <option value="250">250</option>
+                            <option value="500">500</option>
+                        </select>
+
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="demo-foo-addrow" class="table m-t-30 table-hover contact-list" data-page-size="10">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Telefono</th>
+                                <th>Direccion</th>
+                                <th>Codigo</th>
+                                <th>Saldo</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr *ngIf="clients.length == 0">
+                                <td colspan="5">
+                                    <h3 class="mb-0 text-center"> Aun no existen registros de clientes... </h3>
+                                </td>
+                            </tr>
+
+                            <tr *ngFor="let client of clients; let i = index">
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-icon btn-pure btn-outline text-primary delete-row-btn" data-toggle="modal" data-target="#products-client">
+                                        <i *ngIf="!client.activo" class="ti-alert text-warning"> </i>
+                                        {{ client.name }} {{ client.lastname || '' }} 
+                                    </button>
+                                </td>
+                                <td> {{ client.phone }} </td>
+                                <td> {{ client.address }} </td>
+                                <td> {{ client.referralCode }} </td>
+                                <td> {{ client.walletBalance | currency: 'COP' }} </td>
+                                <td>
+                                    <span *ngIf="client.status" class="label label-success"> Activo </span>
+                                    <span *ngIf="!client.status" class="label label-danger"> Desactivado </span>
+                                </td>
+                                <td>
+                                    <button (click)="loadLevels(client.cid!)" type="button" class="btn btn-sm btn-icon btn-pure btn-outline text-primary delete-row-btn" data-toggle="modal" data-target="#niveles">
+                                        <i class="ti-view-list-alt" aria-hidden="true"></i>
+                                    </button>
+                                    <button (click)="selectClient(client)" type="button" class="btn btn-sm btn-icon btn-pure btn-outline text-primary delete-row-btn" data-toggle="modal" data-target="#edit-client">
+                                        <i class="ti-pencil" aria-hidden="true"></i>
+                                    </button>
+                                    <button (click)="clientSelect = client" type="button" class="btn btn-sm btn-icon btn-pure btn-outline text-primary delete-row-btn" data-toggle="modal" data-target="#edit-refer">
+                                        <i class="ti-list" aria-hidden="true"></i>
+                                    </button>
+                                    <a *ngIf="client.carrito?.items?.length! > 0" href="dashboard/facturar/{{client.cid}}" class="btn btn-sm btn-icon btn-pure btn-outline text-success delete-row-btn" target="_blank">
+                                        <i class="ti-shopping-cart" aria-hidden="true"></i>
+                                    </a>
+                                    <button type="button" (click)="deleteClient(client.cid!, i)" class="btn btn-sm btn-icon btn-pure btn-outline text-danger delete-row-btn">
+                                        <i class="ti-trash" aria-hidden="true"></i>
+                                    </button>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                        <tfoot>
+                            <tr>
+
+                                <td colspan="5">
+
+                                    <div class="btn-group" role="group" aria-label="First group">
+                                        <button [disabled]="desde === 0" (click)="cambiarPagina(-10)" type="button" class="btn btn-dark text-white">Atras</button>
+                                        <button [disabled]="( desde + limite ) >= total" (click)="cambiarPagina(10)" type="button" class="btn btn-dark text-white">Siguiente</button>
+                                    </div>
+
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================= 
+MODAL AGREGAR CLIENTE
+======================================================== -->
+<div id="add-client" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" #modalNewUser>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">Nuevo Cliente</h4>
+            </div>
+            <div class="modal-body">
+
+
+                <form class="form-horizontal form-material" autocomplete="off" [formGroup]="newClientForm" (ngSubmit)="createClient()">
+
+                    <div class="form-group has-danger">
+
+                        <div class="col-md-12 m-b-20">
+                            <input formControlName="name" type="text" class="form-control" placeholder="Nombres **">
+                            <div *ngIf="validateNewForm('name')" class="form-control-feedback">
+                                <small> Los nombres son obligatorios </small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <input formControlName="phone" type="text" class="form-control" placeholder="Telefono **">
+                            <div *ngIf="validateNewForm('phone')" class="form-control-feedback">
+                                <small> El telefono es obligatorio </small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <input formControlName="cedula" type="text" class="form-control" placeholder="Cedula">
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <input formControlName="email" type="email" class="form-control" placeholder="Email">
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <input formControlName="address" type="text" class="form-control" placeholder="Dirección">
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <input formControlName="city" type="text" class="form-control" placeholder="Ciudad">
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <input formControlName="department" type="text" class="form-control" placeholder="Departamento">
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="demo-switch-title">Activar Mayoreo</div>
+                            <div class="switch">
+                                <label>
+                                    <input type="checkbox" formControlName="wholesale"><span class="lever switch-col-light-blue"></span></label>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="demo-switch-title">VIP</div>
+                            <div class="switch">
+                                <label>
+                                    <input type="checkbox" formControlName="vip"><span class="lever switch-col-light-blue"></span></label>
+                            </div>
+                        </div>
+
+                        <small class="mb-0 text-muted text-break"> <span class="fw-bold">NOTA:</span> Los campos de texto que tengan ** son obligatorios.</small>
+
+                    </div>
+
+                    <button type="submit" [disabled]="savingNew" class="btn btn-info waves-effect btn-block">Guardar</button>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================= 
+MODAL EDITAR CLIENTE
+======================================================== -->
+<div id="edit-client" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" #modalNewUser>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">Editar Cliente</h4>
+            </div>
+            <div class="modal-body">
+
+
+                <form class="form-horizontal form-material" autocomplete="off" [formGroup]="editClientForm" (ngSubmit)="editClient()">
+
+                    <div class="form-group has-danger">
+
+                        <div class="col-md-12 m-b-20">
+                            <input formControlName="name" type="text" class="form-control" placeholder="Nombres **">
+                            <div *ngIf="validateEditForm('name')" class="form-control-feedback">
+                                <small> Los nombres son obligatorios </small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <input formControlName="lastname" type="text" class="form-control" placeholder="Apellidos **">
+                            <div *ngIf="validateEditForm('lastname')" class="form-control-feedback">
+                                <small> Los apellidos son obligatorios </small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <input formControlName="phone" type="text" class="form-control" placeholder="Telefono **">
+                            <div *ngIf="validateEditForm('phone')" class="form-control-feedback">
+                                <small> El telefono es obligatorio </small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <input formControlName="cedula" type="text" class="form-control" placeholder="Cedula">
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <input formControlName="email" type="email" class="form-control" placeholder="Email">
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <input formControlName="address" type="text" class="form-control" placeholder="Dirección">
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <input formControlName="city" type="text" class="form-control" placeholder="Ciudad">
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <input formControlName="department" type="text" class="form-control" placeholder="Departamento">
+                        </div>
+
+                        <div class="col-sm-12 m-b-20">
+                            <div class="demo-switch-title">Activar Mayoreo</div>
+                            <div class="switch">
+                                <label>
+                                    <input type="checkbox" formControlName="wholesale"><span class="lever switch-col-light-blue"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12 m-b-20">
+                            <div class="demo-switch-title">VIP</div>
+                            <div class="switch">
+                                <label>
+                                    <input type="checkbox" formControlName="vip"><span class="lever switch-col-light-blue"></span></label>
+                            </div>
+                        </div>
+
+                        <small class="mb-0 text-muted text-break"> <span class="fw-bold">NOTA:</span> Los campos de texto que tengan ** son obligatorios.</small>
+                        
+                    </div>
+
+                    <button type="submit" [disabled]="savingNew" class="btn btn-info waves-effect btn-block">Guardar</button>
+                </form>
+
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================= 
+MODAL NIVELES DEL CLIENTE
+======================================================== -->
+<div id="niveles" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalNivelesLabel" aria-hidden="true" #modalNewUser>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalNivelesLabel">NIVELES</h4>
+            </div>
+            <div class="modal-body">
+
+                <div *ngIf="loadClientsReffer">
+                    <p class="mb-0 fs-4 text-center">Cargando...</p>
+                </div>
+
+                <div *ngIf="!loadClientsReffer">
+                    <div class="accordion" id="accordionExample">
+                        <div class="card">
+                            <div class="card-header" id="headingOne">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    <div class="d-flex justify-content-between">
+                                        <span>
+                                            Nivel 1
+                                        </span>
+                                        <span>
+                                            {{first.length}}
+                                        </span>
+                                    </div>
+                              </button>
+                                </h2>
+                            </div>
+
+                            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                <div class="card-body">
+
+                                    <div class="">
+                                        <p class="mb-0" *ngIf="first.length === 0">No tienes ningun referido en este nivel</p>
+                                        <span class="badge m-1" [ngClass]="{'badge-primary': item.activo, 'badge-warning': !item.activo}" *ngFor="let item of first"> {{ item.name +' '+item.lastname }} </span>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header" id="headingTwo">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        <div class="d-flex justify-content-between">
+                                            <span>
+                                                Nivel 2
+                                            </span>
+                                            <span>
+                                                {{two.length}}
+                                            </span>
+                                        </div>
+                              </button>
+                                </h2>
+                            </div>
+                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                                <div class="card-body">
+
+                                    <div class="">
+                                        <p class="mb-0" *ngIf="two.length === 0">No tienes ningun referido en este nivel</p>
+                                        <span class="badge m-1" [ngClass]="{'badge-primary': item.activo, 'badge-warning': !item.activo}" *ngFor="let item of two"> {{ item.name +' '+item.lastname }} </span>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header" id="headingThree">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                        <div class="d-flex justify-content-between">
+                                            <span>
+                                                Nivel 3
+                                            </span>
+                                            <span>
+                                                {{three.length}}
+                                            </span>
+                                        </div>
+                              </button>
+                                </h2>
+                            </div>
+                            <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                                <div class="card-body">
+
+                                    <div>
+                                        <p class="mb-0" *ngIf="three.length === 0">No tienes ningun referido en este nivel</p>
+                                        <span class="badge m-1" [ngClass]="{'badge-primary': item.activo, 'badge-warning': !item.activo}" *ngFor="let item of three"> {{ item.name +' '+item.lastname }} </span>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header" id="headingThree">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapsefour" aria-expanded="false" aria-controls="collapsefour">
+                                        <div class="d-flex justify-content-between">
+                                            <span>
+                                                Nivel 4
+                                            </span>
+                                            <span>
+                                                {{four.length}}
+                                            </span>
+                                        </div>
+                                </button>
+                                </h2>
+                            </div>
+                            <div id="collapsefour" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                                <div class="card-body">
+
+                                    <div>
+                                        <p class="mb-0" *ngIf="four.length === 0">No tienes ningun referido en este nivel</p>
+                                        <span class="badge m-1" [ngClass]="{'badge-primary': item.activo, 'badge-warning': !item.activo}" *ngFor="let item of four"> {{ item.name +' '+item.lastname }} </span>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================= 
+MODAL EDITAR REFERDIO
+======================================================== -->
+<div id="edit-refer" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" #modalNewUser>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">Editar Referido del cliente</h4>
+            </div>
+            <div class="modal-body">
+
+                <div *ngIf="clientSelect" class="card card-body">
+                    <div class="row">
+                        <div class="col-md-12 col-lg-12">
+                            <h3 class="box-title m-b-0"> {{ clientSelect.name + clientSelect.lastname }} </h3>
+                            <address>
+                                {{ clientSelect.address }}
+                                <br>
+                                <abbr title="Email">M:</abbr> {{ clientSelect.email }}
+                            </address>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="row">
+                    <div class="col-sm-12 col-xs-12">
+                        <form>
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Codigo</label>
+                                <input type="text" #icode class="form-control" id="exampleInputEmail1" placeholder="Ingresar el codigo de la persona que lo refirio">
+                            </div>
+
+                            <button type="button" (click)="updateRefer(icode.value)" class="btn btn-success waves-effect waves-light m-r-10">Enviar</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal" #btRf>Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

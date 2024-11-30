@@ -1,0 +1,296 @@
+<div *ngIf="!product">
+    Cargando
+</div>
+
+<!-- DATA -->
+<div *ngIf="product" class="d-flex flex-wrap gap-2">
+
+    <div class="card bg-primary">
+        <div class="card-body text-white text-center">
+            <p class="text-white mb-2 fw-bold">Inventario</p>
+            <h4 class="text-white mb-0 display-6">
+                {{ product.inventory }}
+            </h4>
+        </div>
+    </div>
+
+    <div class="card bg-success">
+        <div class="card-body text-white text-center">
+            <p class="text-white mb-2 fw-bold">Vendidos</p>
+            <h4 class="text-white mb-0 display-6">
+                {{ product.sold }}
+            </h4>
+        </div>
+    </div>
+
+    <div class="card bg-danger">
+        <div class="card-body text-white text-center">
+            <p class="text-white mb-2 fw-bold">Eliminados</p>
+            <h4 class="text-white mb-0 display-6">
+                {{ product.damaged }}
+            </h4>
+        </div>
+    </div>
+
+
+</div>
+
+<div class="d-flex justify-content-end mb-3">
+    <button type="button" class="btn btn-info btn-rounded" data-toggle="modal" data-target="#updateInventory">Actualizar Inventario</button>
+</div>
+
+<div *ngIf="product" class="d-flex flex-wrap">
+
+
+    <!-- IMGS -->
+    <div class="col-md-6">
+
+        <div class="card">
+
+            <div class="card-body">
+
+                <div class="form-group file-area border">
+                    <input #fileImg (change)="cambiarImage($event)" type="file" name="images" id="images" required="required" multiple="multiple" />
+                    <div class="file-dummy">
+
+                        <div class="default py-5">
+                            <h5 class="text-center card-title text-muted">
+                                Agregar Imagen
+                            </h5>
+                            <p class="text-center card-text fs-2 mb-0">
+                                <i class="mdi mdi-plus"></i>
+                            </p>
+                            <p class="text-center card-text fs-sm">Arrastre la imagen ó dar click aquí</p>
+                        </div>
+
+                        <!-- IMG VALIDA -->
+                        <div class="success">
+
+                            <div class="d-flex justify-content-center" *ngIf="imgTempP">
+                                <div class="mx-auto" style="background-image: url({{imgTempP}});width: 400px; height: 300px; background-repeat: no-repeat; background-size: cover; background-position: center center;"></div>
+                            </div>
+
+                        </div>
+                        <!-- IMG VALIDA -->
+                    </div>
+                </div>
+
+                <div *ngIf="imgTempP" class="d-flex justify-content-between flex-wrap pt-4 gap-2">
+                    <button type="button" class="btn btn-info btn-sm" [disabled]="!subirImagen" (click)="subirImg()"> Subir </button>
+                    <button type="button" class="btn btn-danger btn-sm" (click)="imgTempP = ''; fileImg.value = ''"> Eliminar </button>
+                </div>
+
+                <hr>
+
+                <div>
+                    <h4>Imagenes</h4>
+                    <p *ngIf="product.img.length === 0">No se han cargado las imagenes del producto</p>
+                </div>
+
+                <!-- IMGS -->
+                <div *ngIf="product.img.length > 0" class="mt-4">
+
+                    <swiper [config]="config">
+
+                        <ng-template swiperSlide *ngFor="let file of product.img">
+                            <div>
+                                <div style="background-image: url('{{ file.img | imagen }}');width: 150px; height: 150px; background-repeat: no-repeat; background-size: cover; background-position: center center;"></div>
+                                <small class="gallery-item-caption"> {{ file.fecha | date:'medium' }} </small>
+                                <div class="w-100 text-danger">
+                                    <a class="text-decoration-none pointer fs-sm" (click)="deleImg(file.img)">
+                                        <i class="ti ti-trash"></i> Eliminar
+                                    </a>
+                                </div>
+                            </div>
+                        </ng-template>
+
+                    </swiper>
+
+                </div>
+                <!-- IMGS -->
+
+            </div>
+        </div>
+    </div>
+
+    <!-- INFO PRODUCT -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between">
+                    <h4 class="card-title fw-bold">Información del producto <small *ngIf="!product.status" class="text-danger">Desactivado</small> </h4>
+                    <button (click)="changeStatus(product.status)" type="button" class="btn btn-sm waves-effect waves-light" [ngClass]="{'btn-danger': product.status, 'btn-success': !product.status}">
+                        <span *ngIf="product.status">Desactivar</span>
+                        <span *ngIf="!product.status">Activar</span>
+                    </button>
+                </div>
+                <hr>
+
+                <form class="form-horizontal form-material" autocomplete="off" [formGroup]="updateForm" (ngSubmit)="update()">
+
+                    <div class="form-group has-danger">
+
+                        <div class="col-md-12 m-b-20">
+                            <label for="">Codigo</label>
+                            <input formControlName="sku" type="text" class="form-control" placeholder="sku - codigo **">
+                            <div *ngIf="validate('sku')" class="form-control-feedback">
+                                <small> El codigo es obligatorio </small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <label for="">Nombre</label>
+                            <input formControlName="name" type="text" class="form-control" placeholder="Nombre **">
+                            <div *ngIf="validate('name')" class="form-control-feedback">
+                                <small> El nombre es obligatorio </small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <label for="estado"> Tipo</label>
+                            <select formControlName="type" class="form-control" id="estado">
+                                <option value="Unidad" >Unidad</option>
+                                <option value="Granel" >Granel</option>
+                            </select>
+                        </div>
+
+                        <!-- DESCIPCION DEL PRODUCTO -->
+                        <div class="form-group">
+                            <label>Descripción del producto</label>
+                            <textarea formControlName="description" class="form-control" rows="3" #description placeholder="Escribe la descripción del producto..."></textarea>
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <label for="">Costo</label>
+                            <input formControlName="cost" type="number" min="0" class="form-control" placeholder="Costo">
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <label for="">Precio</label>
+                            <input formControlName="price" type="number" class="form-control" placeholder="Precio">
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <label for="">Precio al mayor</label>
+                            <input formControlName="wholesale" type="number" class="form-control" placeholder="Precio la mayor">
+                        </div>
+                        <div class="col-md-12 m-b-20">
+                            <label for="">Precio VIP</label>
+                            <input formControlName="vip" type="number" class="form-control" placeholder="Precio vip">
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <label for="">Minimo</label>
+                            <input formControlName="min" type="number" class="form-control" placeholder="Min">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-12">Seleccionar Categoria</label>
+                            <div class="col-sm-12">
+                                <select formControlName="categoria" class="form-control form-control-line" (change)="loadSubcategories(categoryS.value)" #categoryS>
+                                    <option value="none" disabled>Seleccionar</option>
+                                    
+                                    <ng-container *ngFor="let category of categories" >
+                                        <option *ngIf="category.status" [value]="category.catid"> {{category.name}} </option>
+                                    </ng-container>                                
+                                    
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-12">Seleccionar Subcategoria</label>
+                            <div class="col-sm-12">
+                                <select formControlName="subcategoria" class="form-control form-control-line">
+                                    <option value="none" disabled>Seleccionar</option>
+                                    
+                                    <ng-container *ngIf="subcategories.length > 0">
+                                        <ng-container *ngFor="let subcategory of subcategories" >
+                                            <option *ngIf="subcategory.status" [value]="subcategory.subcaid"> {{subcategory.name}} </option>
+                                        </ng-container>                                
+                                    </ng-container>
+                                    
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <div class="switch">
+                                <label>
+                                    <input type="checkbox" #checkOfert (change)="checkOfert.checked = checkOfert.checked" formControlName="offert"><span class="lever switch-col-indigo"></span>
+                                    Oferta
+                                </label>
+                            </div>
+                        </div>
+
+                        <div *ngIf="checkOfert.checked" class="col-md-12 m-b-20">
+                            <label for="">Precio de Oferta</label>
+                            <input (keyup)="calculatePercent(inoffertPrice.value)" #inoffertPrice formControlName="offertPrice" type="number" class="form-control" placeholder="Precio de oferta">
+                        </div>
+
+                        <div *ngIf="checkOfert.checked" class="col-md-12 m-b-20">
+                            <label for="">Porcentaje de la oferta</label>
+                            <input readonly formControlName="offertPercent" type="number" class="form-control" placeholder="Precio">
+                        </div>
+
+                        <small class="mb-0 text-muted text-break"> <span class="fw-bold">NOTA:</span> Los campos de texto que tengan ** son obligatorios.</small>
+
+                    </div>
+
+                    <button type="submit" [disabled]="formSubmitted" class="btn btn-info waves-effect btn-block">Actualizar</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ========================================================= 
+MODAL ACTUALIZAR INVENTARIO
+======================================================== -->
+<div id="updateInventory" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="updateInventory" aria-hidden="true" #modalNewUser>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="updateInventory">Actualizar Inventario</h4>
+            </div>
+            <div class="modal-body">
+
+
+                <form class="form-horizontal form-material" autocomplete="off" [formGroup]="upInventoryForm" (ngSubmit)="updateInventory()">
+
+                    <div class="form-group has-danger">
+
+                        <div class="col-md-12 m-b-20">
+                            <label for="">Cantidad</label>
+                            <input formControlName="qty" type="number" min="1" class="form-control" placeholder="Cantidad de prodcutos">
+                            <div *ngIf="validateUpInv('qty')" class="form-control-feedback">
+                                <small> La cantidad es obligatoria </small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 m-b-20">
+                            <label for="estado"> Tipo Movimiento</label>
+                            <select formControlName="movimiento" class="form-control" id="estado">
+                                <option value="Agregados" >Agregar</option>
+                                <option value="Eliminados" >Eliminar</option>
+                            </select>
+                        </div>
+
+                        <small class="mb-0 text-muted text-break"> <span class="fw-bold">NOTA:</span> Los campos de texto que tengan ** son obligatorios.</small>
+
+                    </div>
+
+                    <button type="submit" class="btn btn-info waves-effect btn-block">Actualizar</button>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
