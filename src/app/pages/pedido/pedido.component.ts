@@ -2,6 +2,8 @@ import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/
 import { ActivatedRoute } from '@angular/router';
 import Swal from 'sweetalert2';
 
+import { Lightbox } from 'ngx-lightbox';
+
 import { NgxPrinterService } from 'ngx-printer';
 
 import { Pedido } from 'src/app/models/pedidos.model';
@@ -30,13 +32,15 @@ interface _invoice{
 export class PedidoComponent implements OnInit {
 
   public empresa:any = environment.empresa;
+  public url: string = environment.base_url;
   public menS: number = 0;
   public mayS: number = 0;
 
   constructor(  private activatedRoute: ActivatedRoute,
                 private pedidosService: PedidosService,
                 private invoicesService: InvoicesService,
-                private printerService: NgxPrinterService) { 
+                private printerService: NgxPrinterService,
+                private lightbox: Lightbox) { 
 
     activatedRoute.params.subscribe( ({id}) => {
       this.loadPedido(id);      
@@ -45,6 +49,23 @@ export class PedidoComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  /** ======================================================================
+   * Lightbox
+  ====================================================================== */
+  openLightbox(productImages: any[]) {
+    const album = productImages.map((image) => ({
+      src: `${this.url}/uploads/products/${image.img}`,
+      caption: 'Imagen del producto',
+      thumb: `${this.url}/uploads/products/${image.img}`,
+    }));
+
+    this.lightbox.open(album, 0); // El segundo parámetro es el índice inicial
+  }
+
+  closeLightbox(): void {
+    this.lightbox.close();
   }
 
   /** ======================================================================

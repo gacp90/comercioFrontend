@@ -95,15 +95,10 @@ export class ProductoComponent implements OnInit {
                 if (product.img.length > 0) {
                   this.portada = this.product.img.img;
                 }
+                
 
                 if (product.categoria) {
-                  this.loadSubcategories(product.categoria.catid);                  
-                }else{
-                  product.categoria._id = 'none';
-                }
-
-                if (!product.subcategoria) {
-                  product.subcategoria._id = 'none';
+                  this.loadSubcategories(product.categoria.catid!);                  
                 }
 
                 this.updateForm.setValue({
@@ -116,8 +111,8 @@ export class ProductoComponent implements OnInit {
                   vip: this.product.vip || 0,
                   cost: this.product.cost,
                   min: this.product.min,
-                  categoria: product.categoria._id || 'none',
-                  subcategoria: product.subcategoria._id || 'none',
+                  categoria: (this.product.categoria)? this.product.categoria._id : 'none',
+                  subcategoria: (this.product.subcategoria)? this.product.subcategoria._id : 'none',
                   visibility: this.product.visibility,
                   offert: this.product.offert || false,
                   offertPrice: this.product.offertPrice || 0,

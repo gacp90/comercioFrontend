@@ -1,0 +1,13 @@
+.thumbnail {
+    max-width: 80px;
+    max-height: 80px;
+    cursor: pointer;
+    margin: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: transform 0.2s;
+  }
+  
+  .thumbnail:hover {
+    transform: scale(1.1);
+  }

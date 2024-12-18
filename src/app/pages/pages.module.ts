@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { SwiperModule } from 'swiper/angular';
 import { NgxPrinterModule } from 'ngx-printer';
+import { LightboxModule } from 'ngx-lightbox';
 
 // MODULES
 import { RouterModule } from '@angular/router';
@@ -69,6 +70,7 @@ import { MovimientosComponent } from './movimientos/movimientos.component';
     ReactiveFormsModule,
     PipesModule,
     SwiperModule,
+    LightboxModule,
     NgxPrinterModule.forRoot({printOpenWindow: true})
     
   ]

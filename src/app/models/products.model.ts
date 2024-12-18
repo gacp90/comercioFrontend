@@ -1,3 +1,6 @@
+import { Category } from "./category.model";
+import { Subcategory } from "./subcategory.model";
+
 interface _img {
     img: string,
     fecha: Date
@@ -26,8 +29,8 @@ export class Product{
         public offertPercent: number,
         public taxes: boolean,
         public tax: any,
-        public categoria: any,
-        public subcategoria: any,
+        public categoria: Category,
+        public subcategoria: Subcategory,
         public visibility: boolean,
         public status: boolean,
         public date: Date,
