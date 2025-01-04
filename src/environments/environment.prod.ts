@@ -1,20 +1,20 @@
 export const environment = {
   production: true,
-  base_url: 'https://admin.shopybrands.com/api',
-  local_url: 'https://admin.shopybrands.com',
+  base_url: 'https://admin.discoverysystemspos.com/api',
+  local_url: 'https://admin.discoverysystemspos.com/api',
   empresa: {
-    name:'shopybrands.com',
-    address:'Bogota - Colombia',
-    nit:'000000000',
-    email: 'elkindanielcastillo@gmail.com',
-    phone: '+573155962626',
-    facebook: 'https://www.facebook.com/shopybrands',
-    instagram: 'https://www.instagram.com/shopybrands',
+    name:'discoverysystemspos.com',
+    address:'Bucaramanga - Colombia',
+    nit:'88243048-6',
+    email: 'dsposcolombia@gmail.com',
+    phone: '+573205792169',
+    facebook: 'https://www.facebook.com/dsposcolombia',
+    instagram: 'https://www.instagram.com/dsposcolombia',
     tiktok: 'none',
-    whatsapp: 'whatsapp://send?text=hola,+me+interesa+tus+productos&phone=+573155962626',
-    logo: 'logo-shopy.webp',
-    logob: 'logo-shopy-blanco.webp',
-    ico: 'logo-shopy.webp',
+    whatsapp: 'whatsapp://send?text=hola,+me+interesa+tus+productos&phone=+573205792169',
+    logo: 'logo-dspos.webp',
+    logob: 'logo-dspos-blanco.webp',
+    ico: 'logo-dspos.webp',
     sizeico: '150'
   }
 };

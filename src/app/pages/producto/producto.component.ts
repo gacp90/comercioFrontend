@@ -361,8 +361,52 @@ export class ProductoComponent implements OnInit {
   }
 
   /** ================================================================
+   *  ADD VIDEO
+  ==================================================================== */
+  @ViewChild ('linkI') linkI!:ElementRef;
+  addVideo(video: string){
+
+    video = video.trim();
+
+    this.product.videos.push({
+      video,
+      fecha: new Date()
+    })
+
+    this.productsService.updateProduct({videos: this.product.videos, sku: this.product.sku}, this.product.pid)
+        .subscribe( ({product}) => {
+
+          this.linkI.nativeElement.value = '';
+
+        }, (err) => {
+          console.log(err);
+          Swal.fire('Error', err.error.msg, 'error');
+        })
+
+
+  }
+
+  /** ================================================================
+   *  DELETE VIDEO
+  ==================================================================== */
+  delVideo(i: any){
+
+    this.product.videos.splice(i,1);
+
+    this.productsService.updateProduct({videos: this.product.videos, sku: this.product.sku}, this.product.pid)
+        .subscribe( ({product}) => {
+          
+        }, (err) => {
+          console.log(err);
+          Swal.fire('Error', err.error.msg, 'error');
+        })
+
+  }
+
+
+  /** ================================================================
    *  CONFIG SWIPER
-  ==================================================================== */  
+  ==================================================================== */
   public config = {
     slidesPerView:1,
     spaceBetween:10,

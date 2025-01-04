@@ -108,6 +108,57 @@
 
                 </div>
                 <!-- IMGS -->
+                <!-- VIDEOS -->
+                <hr>
+                <div>
+                    <h4>Videos</h4>
+                    <p class="text-muted">Agrega los links de video de este producto</p>
+                    
+                    <div class="d-flex flex-wrap justify-content-between ">
+                        <div class="col-12 col-md-8">
+                            <input type="text" class="form-control" id="linkI" #linkI placeholder="Link">
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <button type="button" class="btn btn-primary mb-3" (click)="addVideo(linkI.value)" >Agregar</button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-stripe table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Link</th>
+                                    <th>Fecha</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr *ngIf="product.videos.length === 0">
+                                    <td>No se han agregado videos</td>
+                                </tr>
+
+                                <tr *ngFor="let item of product.videos; let i = index">
+                                    <td> 
+                                        <a [href]="item.video" target="_blank">
+                                            <small>
+                                                {{item.video}}
+                                            </small>
+                                        </a>
+                                    </td>
+                                    <td>{{item.fecha | date:'short'}}</td>
+                                    <td> 
+                                        <button (click)="delVideo(i)" type="button" class="btn btn-sm btn-icon btn-pure btn-outline delete-row-btn text-danger">
+                                            <i class="ti-trash" aria-hidden="true"></i>
+                                        </button> 
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+                <!-- VIDEOS -->
 
             </div>
         </div>

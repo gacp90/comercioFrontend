@@ -6,6 +6,11 @@ interface _img {
     fecha: Date
 }
 
+interface _video {
+    video: string,
+    fecha: Date
+}
+
 export class Product{
 
     constructor(
@@ -35,6 +40,7 @@ export class Product{
         public status: boolean,
         public date: Date,
         public img: _img[],
+        public videos: _video[],
         public pid?: string,
         public _id?: string,
     ) {}
