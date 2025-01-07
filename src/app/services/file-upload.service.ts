@@ -37,7 +37,7 @@ export class FileUploadService {
     archivo: File,
     type: 'products' | 'logo' | 'user',
     id: string,
-    desc: 'imgBef' | 'imgAft' | 'video' | 'none' = 'none'
+    desc: string |'logo' | 'logob' | 'ico' |'imgBef' | 'imgAft' | 'video' | 'none' = 'none'
   ){
 
     try {

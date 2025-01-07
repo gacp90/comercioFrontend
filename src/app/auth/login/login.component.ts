@@ -15,7 +15,7 @@ export class LoginComponent implements OnInit {
 
   constructor(  private router: Router,
                 private fb: FormBuilder,
-                private usersService: UsersService) { }
+                private usersService: UsersService,) { }
 
   ngOnInit(): void {
   }
@@ -52,6 +52,8 @@ export class LoginComponent implements OnInit {
           }else {
             localStorage.removeItem('email');
           }
+
+
 
           // INGRESAR
           this.router.navigateByUrl('/');

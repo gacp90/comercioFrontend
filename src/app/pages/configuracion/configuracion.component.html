@@ -1,0 +1,255 @@
+<!-- ============================================================== -->
+<!-- Start Page Content -->
+<!-- ============================================================== -->
+<!-- Row -->
+<div *ngIf="empresa" class="row">
+    <!-- Column -->
+    <div class="col-lg-4 col-xlg-3 col-md-5">
+        <div class="card">
+            <div class="card-body">
+
+                <div class="form-group file-area border">
+                    <input #fileImg (change)="cambiarImage($event)" type="file" name="images" id="images" required="required" multiple="multiple" />
+                    <div class="file-dummy">
+
+                        <div class="default py-5">
+                            <h5 class="text-center card-title text-muted">
+                                Agregar Imagen
+                            </h5>
+                            <p class="text-center card-text fs-2 mb-0">
+                                <i class="mdi mdi-plus"></i>
+                            </p>
+                            <p class="text-center card-text fs-sm">Arrastre la imagen ó dar click aquí</p>
+                        </div>
+
+                        <!-- IMG VALIDA -->
+                        <div class="success">
+
+                            <div class="d-flex justify-content-center" *ngIf="imgTempP">
+                                <div class="mx-auto" style="background-image: url({{imgTempP}});width: 100px; height: auto; min-height: 50px; background-repeat: no-repeat; background-size: cover; background-position: center center;"></div>
+                            </div>
+
+                        </div>
+                        <!-- IMG VALIDA -->
+                    </div>
+                </div>
+
+                <div *ngIf="imgTempP" >
+                    
+                    <select #desc class="form-select mb-3 w-100" aria-label="Default select example">
+                        <option value="none" selected>Tipó de imagen</option>
+                        <option value="logo">logo</option>
+                        <option value="logob">logo 2</option>
+                        <option value="ico">icono</option>
+                    </select>
+
+                    <div class="d-flex justify-content-between flex-wrap pt-4 gap-2">
+                        <button type="button" class="btn btn-info btn-sm" [disabled]="!subirImagen" (click)="subirImg(desc.value)"> Subir </button>
+                        <button type="button" class="btn btn-danger btn-sm" (click)="imgTempP = ''; fileImg.value = ''"> Eliminar </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="empresa.logo" class="card">
+            <div class="card-body">
+                <h3>Logo Principal</h3>
+                <div [ngStyle]="{'background': header.background}">
+                    <img [src]="empresa.logo | imagen:'logo'" class="mx-auto" alt="" style="max-width: 100%;">
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="empresa.logob" class="card">
+            <div class="card-body">
+                <h3>Logo Footer</h3>
+                <div [ngStyle]="{'background': header.background}">
+                    <img [src]="empresa.logob | imagen:'logo'" class="mx-auto" alt="" style="max-width: 100%;">
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="empresa.ico" class="card">
+            <div class="card-body">
+                <h3>Icono</h3>
+                <div class="d-flex justify-content-center" [ngStyle]="{'background': header.background}">
+                    <img [src]="empresa.ico | imagen:'logo'" class="mx-auto" alt="" style="max-width: 100%;">
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h3>Header</h3>
+                <div class="py-2" [ngStyle]="{'background': header.background}" >
+                    <p class="mb-0 h4 text-center" [ngStyle]="{'color': header.color}">TEXTO</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="example-color-input" class="">Fondo Header</label>
+                    <input #hb class="form-control" type="color" [value]="header.background" id="example-color-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="example-color-input" class="">Color del texto</label>
+                    <input #hc class="form-control" type="color" [value]="header.color" id="example-color-input">
+                </div>
+
+                <button type="button" class="btn btn-primary w-100" (click)="changeHeader(hb.value, hc.value)">
+                    Actualizar Header
+                </button>                
+
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h3>Footer</h3>
+                <div class="py-2" [ngStyle]="{'background': footer.background}" >
+                    <p class="mb-0 h4 text-center" [ngStyle]="{'color': footer.color}">TEXTO</p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="example-color-input" class="">Fondo Footer</label>
+                    <input #fb class="form-control" type="color" [value]="footer.background" id="example-color-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="example-color-input" class="">Color del texto</label>
+                    <input #fc class="form-control" type="color" [value]="footer.color" id="example-color-input">
+                </div>
+
+                <button type="button" class="btn btn-primary w-100" (click)="changeFooter(fb.value, fc.value)">
+                    Actualizar Footer
+                </button>  
+
+            </div>
+        </div>
+
+    </div>
+    <!-- Column -->
+    <!-- Column -->
+    <div class="col-lg-8 col-xlg-9 col-md-7">
+        <div class="card">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs profile-tab" role="tablist">
+                <!-- <li class="nav-item">
+                    <a class="nav-link " data-toggle="tab" href="#preventives" role="tab">Preventivos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#correctives" role="tab">Correctivos</a>
+                </li> -->
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#settings" role="tab">Settings</a>
+                </li>
+            </ul>
+            <!-- Tab panes -->
+            <div class="tab-content">
+
+                <!-- =================================
+                    FORM
+                ================================== -->
+                <div class="tab-pane active" id="settings" role="tabpanel">
+                    <div class="card-body">
+                        <form class="form-horizontal form-material" [formGroup]="formUpdate" (ngSubmit)="update()">
+
+                            <div class="form-group" [ngClass]="{'has-danger': validateEditForm('name')}">
+                                <label class="col-md-12"> Nombre o Razón Social </label>
+                                <div class="col-md-12">
+                                    <input formControlName="name" type="text" placeholder="Johnathan Doe" class="form-control form-control-line" [ngClass]="{'form-control-danger': validateEditForm('name')}">
+                                    <small *ngIf="validateEditForm('name')" class="form-control-feedback animated fadeIn">Este campo es obligatorio</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group" [ngClass]="{'has-danger': validateEditForm('email')}">
+                                <label class="col-md-12"> Email </label>
+                                <div class="col-md-12">
+                                    <input formControlName="email" type="email" placeholder="jhon@example.com" class="form-control " [ngClass]="{'form-control-danger': validateEditForm('email')}">
+                                    <small *ngIf="validateEditForm('email')" class="form-control-feedback animated fadeIn">Este campo es obligatorio</small>
+                                </div>
+
+                            </div>
+
+                            <div class="form-group" [ngClass]="{'has-danger': validateEditForm('address')}">
+                                <label class="col-md-12"> Dirección </label>
+                                <div class="col-md-12">
+                                    <input formControlName="address" type="text" placeholder="Dirección" class="form-control form-control-line" [ngClass]="{'form-control-danger': validateEditForm('name')}">
+                                    <small *ngIf="validateEditForm('address')" class="form-control-feedback animated fadeIn">Este campo es obligatorio</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group" [ngClass]="{'has-danger': validateEditForm('nit')}">
+                                <label class="col-md-12"> nit </label>
+                                <div class="col-md-12">
+                                    <input formControlName="nit" type="text" placeholder="Nit" class="form-control form-control-line" [ngClass]="{'form-control-danger': validateEditForm('name')}">
+                                    <small *ngIf="validateEditForm('nit')" class="form-control-feedback animated fadeIn">Este campo es obligatorio</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group" [ngClass]="{'has-danger': validateEditForm('codephone')}">
+                                <label class="col-md-12"> Codigo Pais </label>
+                                <div class="col-md-12">
+                                    <input formControlName="codephone" type="number" min="0" placeholder="Dirección" class="form-control form-control-line" [ngClass]="{'form-control-danger': validateEditForm('name')}">
+                                    <small *ngIf="validateEditForm('codephone')" class="form-control-feedback animated fadeIn">Este campo es obligatorio</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group" [ngClass]="{'has-danger': validateEditForm('phone')}">
+                                <label class="col-md-12"> Telefono </label>
+                                <div class="col-md-12">
+                                    <input formControlName="phone" type="tel" placeholder="Telefono" class="form-control form-control-line" [ngClass]="{'form-control-danger': validateEditForm('name')}">
+                                    <small *ngIf="validateEditForm('phone')" class="form-control-feedback animated fadeIn">Este campo es obligatorio</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group" [ngClass]="{'has-danger': validateEditForm('facebook')}">
+                                <label class="col-md-12"> facebook </label>
+                                <div class="col-md-12">
+                                    <input formControlName="facebook" type="text" placeholder="Facebook" class="form-control form-control-line" [ngClass]="{'form-control-danger': validateEditForm('name')}">
+                                    <small *ngIf="validateEditForm('facebook')" class="form-control-feedback animated fadeIn">Este campo es obligatorio</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group" [ngClass]="{'has-danger': validateEditForm('instagram')}">
+                                <label class="col-md-12"> instagram </label>
+                                <div class="col-md-12">
+                                    <input formControlName="instagram" type="text" placeholder="Instagram" class="form-control form-control-line" [ngClass]="{'form-control-danger': validateEditForm('name')}">
+                                    <small *ngIf="validateEditForm('instagram')" class="form-control-feedback animated fadeIn">Este campo es obligatorio</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group" [ngClass]="{'has-danger': validateEditForm('tiktok')}">
+                                <label class="col-md-12"> tiktok </label>
+                                <div class="col-md-12">
+                                    <input formControlName="tiktok" type="text" placeholder="Tiktok" class="form-control form-control-line" [ngClass]="{'form-control-danger': validateEditForm('name')}">
+                                    <small *ngIf="validateEditForm('tiktok')" class="form-control-feedback animated fadeIn">Este campo es obligatorio</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <button [disabled]="formSubmmited" type="submit" class="btn btn-success">
+                                        <span *ngIf="formSubmmited">Actualizando...</span>
+                                        <span *ngIf="!formSubmmited">Actualizar</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- =================================
+                    FORM
+                ================================== -->
+
+
+
+            </div>
+        </div>
+    </div>
+    <!-- Column -->
+</div>
+<!-- Row -->
+<!-- ============================================================== -->
+<!-- End PAge Content -->
+<!-- ============================================================== -->
