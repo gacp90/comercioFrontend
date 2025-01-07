@@ -24,6 +24,8 @@ export class Empresa{
         public whatsapp: string,
         public ico: string,
         public sizeico: string,
+        public descripcion: string,
+        public keywords: string,
         public marketing: boolean,
         public nivelone: _nivel,
         public niveltow: _nivel,

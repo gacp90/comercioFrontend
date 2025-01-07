@@ -203,6 +203,14 @@
                                 </div>
                             </div>
 
+                            <div class="form-group" [ngClass]="{'has-danger': validateEditForm('whatsapp')}">
+                                <label class="col-md-12"> Whatsapp </label>
+                                <div class="col-md-12">
+                                    <input formControlName="whatsapp" type="tel" placeholder="Telefono" class="form-control form-control-line" [ngClass]="{'form-control-danger': validateEditForm('name')}">
+                                    <small *ngIf="validateEditForm('whatsapp')" class="form-control-feedback animated fadeIn">Este campo es obligatorio</small>
+                                </div>
+                            </div>
+
                             <div class="form-group" [ngClass]="{'has-danger': validateEditForm('facebook')}">
                                 <label class="col-md-12"> facebook </label>
                                 <div class="col-md-12">
@@ -224,6 +232,22 @@
                                 <div class="col-md-12">
                                     <input formControlName="tiktok" type="text" placeholder="Tiktok" class="form-control form-control-line" [ngClass]="{'form-control-danger': validateEditForm('name')}">
                                     <small *ngIf="validateEditForm('tiktok')" class="form-control-feedback animated fadeIn">Este campo es obligatorio</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group" [ngClass]="{'has-danger': validateEditForm('descripcion')}">
+                                <label class="col-md-12"> descripcion </label>
+                                <div class="col-md-12">
+                                    <input formControlName="descripcion" type="text" placeholder="descripcion" class="form-control form-control-line" [ngClass]="{'form-control-danger': validateEditForm('name')}">
+                                    <small *ngIf="validateEditForm('descripcion')" class="form-control-feedback animated fadeIn">Este campo es obligatorio</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group" [ngClass]="{'has-danger': validateEditForm('keywords')}">
+                                <label class="col-md-12"> keywords </label>
+                                <div class="col-md-12">
+                                    <input formControlName="keywords" type="text" placeholder="keywords" class="form-control form-control-line" [ngClass]="{'form-control-danger': validateEditForm('name')}">
+                                    <small *ngIf="validateEditForm('keywords')" class="form-control-feedback animated fadeIn">Este campo es obligatorio</small>
                                 </div>
                             </div>
 

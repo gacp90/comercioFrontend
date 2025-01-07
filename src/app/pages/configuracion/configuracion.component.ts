@@ -62,7 +62,9 @@ export class ConfiguracionComponent implements OnInit {
             facebook: empresa.facebook || '',
             instagram: empresa.instagram || '',
             tiktok: empresa.tiktok || '',
-            whatsapp: empresa.whatsapp || ''
+            whatsapp: empresa.whatsapp || '',
+            descripcion: empresa.descripcion || '',
+            keywords: empresa.keywords || ''
           })
           
         }, (err) => {
@@ -83,16 +85,18 @@ export class ConfiguracionComponent implements OnInit {
     nit: ['', [Validators.required]],
     codephone: ['', [Validators.required]],
     phone: ['', [Validators.required]],
-    facebook: ['', [Validators.required]],
-    instagram: ['', [Validators.required]],
-    tiktok: ['', [Validators.required]],
-    whatsapp: ['', [Validators.required]]
+    facebook: '',
+    instagram: '',
+    tiktok: '',
+    whatsapp: ['', [Validators.required]],
+    descripcion: ['', [Validators.required]],
+    keywords: ['', [Validators.required]]
   })
 
   update(){
 
     this.formSubmmited = true;
-
+    
     if (this.formUpdate.invalid) {
       this.formSubmmited = false;
       return
@@ -102,8 +106,8 @@ export class ConfiguracionComponent implements OnInit {
         .subscribe( ({empresa}) => {
 
           this.formSubmmited = false;
-          this.loadEmpresa();
           Swal.fire('Estupendo', 'Se ha actualizado la información exitosamente!', 'success');
+          this.loadEmpresa();
           
           
         }, (err) => {

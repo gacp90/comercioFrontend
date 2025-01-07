@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 
-import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Empresa } from '../models/empresa.model';
 import { tap } from 'rxjs';
 
+import { environment } from '../../environments/environment';
 const base_url = environment.base_url;
 
 @Injectable({
