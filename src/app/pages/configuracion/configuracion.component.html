@@ -252,6 +252,17 @@
                             </div>
 
                             <div class="form-group">
+                                <label for=""> Como Funciona </label>
+                                <div class="switch">
+                                    <label>
+                                        <input formControlName="comofunciona"  (change)="cmf.checked = cmf.checked" #cmf type="checkbox"><span class="lever switch-col-purple"></span>
+                                        <span *ngIf="cmf.checked">Activo</span>
+                                        <span *ngIf="!cmf.checked">Desactivado</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
                                 <div class="col-sm-12">
                                     <button [disabled]="formSubmmited" type="submit" class="btn btn-success">
                                         <span *ngIf="formSubmmited">Actualizando...</span>
@@ -266,7 +277,163 @@
                     FORM
                 ================================== -->
 
+            </div>
+        </div>
 
+        <div class="card">
+            <div class="card-body">
+                <h4 class="mb-3">Carrusel</h4>
+
+                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                    Nuevo Carrusel
+                </button>
+
+                <!-- NUEVO CARRUSEL FORMULARIO -->
+                <div class="collapse mt-3" id="collapseExample">
+                    <div class="">
+                      
+                        <div class="d-flex flex-wrap gap-2mb-3">
+
+                            <!-- IMAGEN -->
+                            <div class="flex-fill">
+                                <div class="form-group file-area border">
+                                    <input #fileImgC (change)="cambiarImageC($event)" type="file" name="images" id="imagesC" required="required" multiple="multiple" />
+                                    <div class="file-dummy">
+                
+                                        <div class="default py-5">
+                                            <h5 class="text-center card-title text-muted">
+                                                Agregar Imagen
+                                            </h5>
+                                            <p class="text-center card-text fs-2 mb-0">
+                                                <i class="mdi mdi-plus"></i>
+                                            </p>
+                                            <p class="text-center card-text fs-sm">Arrastre la imagen ó dar click aquí</p>
+                                        </div>
+                
+                                        <!-- IMG VALIDA -->
+                                        <div class="success">
+                
+                                            <div class="d-flex justify-content-center" *ngIf="imgTempC">
+                                                <div class="mx-auto" style="background-image: url({{imgTempC}});width: 250px; height: 200px; background-repeat: no-repeat; background-size: contain; background-position: center center;"></div>
+                                            </div>
+                
+                                        </div>
+                                        <!-- IMG VALIDA -->
+                                    </div>
+                                </div>
+                
+                                <div *ngIf="imgTempC" >                                                                                        
+                                    <div class="d-flex justify-content-between flex-wrap pt-4 gap-2">
+                                        <button type="button" class="btn btn-danger btn-sm" (click)="imgTempC = ''; fileImgC.value = ''"> Eliminar </button>
+                                    </div>                
+                                </div>
+
+                            </div>
+
+                            <div class="flex-grow-1 ">
+                                <form [formGroup]="carruselForm" (ngSubmit)="createCarrusel()" class="col-12">
+
+                                    <div class="form-group" [ngClass]="{'has-danger': validateEditForm('titulo')}">
+                                        <label> TITULO </label>
+                                        <div>
+                                            <input formControlName="titulo" type="text" placeholder="Titulo" class="form-control form-control-line" [ngClass]="{'form-control-danger': validateEditForm('titulo')}">
+                                            <small *ngIf="validateEditForm('titulo')" class="form-control-feedback animated fadeIn">Este campo es obligatorio</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" [ngClass]="{'has-danger': validateEditForm('parrafo')}">
+                                        <label> Parrafo </label>
+                                        <div>
+                                            <input formControlName="parrafo" type="text" placeholder="parrafo" class="form-control form-control-line" [ngClass]="{'form-control-danger': validateEditForm('parrafo')}">
+                                            <small *ngIf="validateEditForm('parrafo')" class="form-control-feedback animated fadeIn">Este campo es obligatorio</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" [ngClass]="{'has-danger': validateEditForm('parrafotow')}">
+                                        <label> Parrafo 2 </label>
+                                        <div>
+                                            <input formControlName="parrafotow" type="text" placeholder="parrafotow" class="form-control form-control-line" [ngClass]="{'form-control-danger': validateEditForm('parrafotow')}">
+                                            <small *ngIf="validateEditForm('parrafotow')" class="form-control-feedback animated fadeIn">Este campo es obligatorio</small>
+                                        </div>
+                                    </div>
+                                    
+
+                                    <div class="form-group">
+                                        <label for="fondiCarrusel" class="">Fondo del carrusel</label>
+                                        <input formControlName="background"  #fc class="form-control" type="color" id="fondiCarrusel">
+                                    </div>
+
+                                    <div class="w-100 mb-3">
+                                        <div class="switch">
+                                            <label>
+                                                <input formControlName="status"  (change)="ac.checked = ac.checked" #ac type="checkbox"><span class="lever switch-col-purple"></span>
+                                                <span *ngIf="ac.checked">Activo</span>
+                                                <span *ngIf="!ac.checked">Desactivado</span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-success">
+                                        <span >Crear</span>
+                                    </button>
+
+                                </form>
+
+
+                            </div>
+
+                        </div>
+
+                        
+                    </div>
+                </div>
+
+                <hr>
+
+                        <!-- LISTA DE CARRUSELES -->
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col"></th>
+                                        <th scope="col">Titulo</th>
+                                        <th scope="col">Parrafo</th>
+                                        <th scope="col">Parrafo 2</th>
+                                        <th scope="col">Fondo</th>
+                                        <th scope="col"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngIf="carruseles.length === 0">
+                                        <td class="text-center" colspan="5"> No hay registros... </td>
+                                    </tr>
+                                    <tr *ngFor="let carrusel of carruseles">
+                                        <td>
+                                            <span class="round" [style]="'background: ' +carrusel.background">
+                                                <img [src]="carrusel.img | imagen: 'carrusel'" alt="user" width="50">
+                                            </span>
+                                            
+                                        </td>
+                                        <td scope="row"> {{ carrusel.titulo }} </td>
+                                        <td>{{ carrusel.parrafo }}</td>
+                                        <td>{{ carrusel.parrafotow }}</td>
+                                        <td> 
+                                            <span class="badge" [style]="'background: ' +carrusel.background"> {{carrusel.background}} </span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex flex-wrap">                                            
+                                                <button (click)="statusCarrusel(carrusel)" type="button" class="btn btn-sm color-white" [ngClass]="{'btn-success': carrusel.status, 'btn-dark': !carrusel.status}" >
+                                                    <i class="ti ti-power-off"></i>
+                                                </button>
+                                                <a (click)="deleteCarrusel(carrusel.carid)" class="btn btn-sm btn-icon btn-pure btn-outline text-danger delete-row-btn">
+                                                    <i class=" ti-trash" aria-hidden="true"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
 
             </div>
         </div>

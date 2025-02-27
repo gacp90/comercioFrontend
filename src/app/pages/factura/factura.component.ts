@@ -11,6 +11,7 @@ import { InvoicesService } from 'src/app/services/invoices.service';
 import Swal from 'sweetalert2';
 
 import { environment } from '../../../environments/environment';
+import { EmpresaService } from 'src/app/services/empresa.service';
 
 @Component({
   selector: 'app-factura',
@@ -19,10 +20,11 @@ import { environment } from '../../../environments/environment';
 })
 export class FacturaComponent implements OnInit {
 
-  public empresa:any = environment.empresa;
+  public empresa:any;
 
   constructor(  private activatedRoute: ActivatedRoute,
                 private invoicesService: InvoicesService,
+                private empresaService: EmpresaService,
                 private printerService: NgxPrinterService) { 
     activatedRoute.params.subscribe( ({id}) =>{
 
@@ -32,7 +34,10 @@ export class FacturaComponent implements OnInit {
   }
 
   ngOnInit(): void {  
-
+    this.empresaService.loadEmpresa()
+      .subscribe( ({empresa}) => {
+        this.empresa = empresa;
+      })
   }
 
   /** ================================================================

@@ -32,6 +32,7 @@ export class Empresa{
         public nivelthree: _nivel,
         public nivelfour: _nivel,
         public status: boolean,
+        public comofunciona: boolean,
         public footer: _hf,
         public header: _hf,
         public fecha: Date,

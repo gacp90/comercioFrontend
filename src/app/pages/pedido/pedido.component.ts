@@ -14,6 +14,7 @@ import { PedidosService } from 'src/app/services/pedidos.service';
 import { InvoicesService } from 'src/app/services/invoices.service';
 
 import { environment } from '../../../environments/environment';
+import { EmpresaService } from 'src/app/services/empresa.service';
 
 interface _invoice{
   pedido: string,
@@ -31,7 +32,7 @@ interface _invoice{
 })
 export class PedidoComponent implements OnInit {
 
-  public empresa:any = environment.empresa;
+  public empresa:any;
   public url: string = environment.base_url;
   public menS: number = 0;
   public mayS: number = 0;
@@ -40,6 +41,7 @@ export class PedidoComponent implements OnInit {
                 private pedidosService: PedidosService,
                 private invoicesService: InvoicesService,
                 private printerService: NgxPrinterService,
+                private empresaService: EmpresaService,
                 private lightbox: Lightbox) { 
 
     activatedRoute.params.subscribe( ({id}) => {
@@ -49,6 +51,12 @@ export class PedidoComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+    this.empresaService.loadEmpresa()
+        .subscribe( ({empresa}) => {
+          this.empresa = empresa;
+        })
+
   }
 
   /** ======================================================================
